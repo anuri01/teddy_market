@@ -1,0 +1,22 @@
+# 운영체제 생성 파일
+.DS_Store
+Thumbs.db
+
+# 로그 파일
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 환경 변수 파일 (API 키 등 민감 정보 포함)
+.env
+
+# 클라이언트 폴더 내부
+/client/node_modules
+/client/dist
+
+# 서버 폴더 내부
+/server/node_modules
+/server/dist
+my-blog-s3-uploder_accessKeys.csv
+
+node_modules
