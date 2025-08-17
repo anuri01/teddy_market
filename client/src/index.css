@@ -1,68 +1,161 @@
+/* --- 기본 스타일 초기화 및 전체 폰트 설정 --- */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  background-color: #f0f2f5;
+}
+
+/* 모든 요소에 box-sizing 적용 (레이아웃 편의성) */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 모바일 화면을 흉내 내는 전체 컨테이너 */
+.app-container {
+  max-width: 420px;
   min-height: 100vh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  height: 4.5rem;
+  border-bottom: 1px solid #e9ecef;
 }
 
-button {
+.app-main {
+  padding: 1.5rem;
+}
+
+/* 헤더 내부 요소 */
+.logo a {
+  font-size: 1.5rem;
+  font-weight: 800; /* 더 굵게 */
+  text-decoration: none;
+  color: #212529;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navigation a, .navigation .nav-button {
+  text-decoration: none;
+  color: #495057;
+  font-weight: 500;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: inherit;
+}
+
+/* 공통 폼 스타일 */
+.auth-page h2, .post-creator h3 {
+  font-size: 1.8rem;
+  text-align: conter;
+  margin-bottom: 2rem;
+}
+
+.form-input, .form-textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* 공통 버튼 스타일 */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 3rem;
+  padding: 0 1.5rem;
   border-radius: 8px;
   border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  font-size: 1.1rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  text-decoration: none;
+  transition: background-color 0.2s;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.button-primary {
+  background-color: #3498db; /* 피그마의 파란색 버튼 */
+  color: white;
+  border-color: #3498db;
+}
+
+.button-primary_naver {
+  background-color: #03c75a; /* 피그마의 초록색 버튼 */
+  color: white;
+  border-color: #03c75a
+}
+
+.product-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2d열 그리드 */
+  gap: 1rem; /* 카드 사이 간격 */ 
+}
+
+.product-card{
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden; /* 이미지가 모서리를 벗어나지 않도록 */
+}
+
+.product-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover; /* 이미지 비율 유지 */
+}
+
+.product-info {
+  padding: 1rem;
+}
+
+.product-info h3 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.product-info p {
+  font-size: 0.9rem;
+  color: #868e96;
+  margin: 0;
+}
+
+/* 상품 등록 버튼 */
+.add-product-button {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
 }
