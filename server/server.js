@@ -80,7 +80,7 @@ app.post('/api/users/signup', async (req, res) => {
     }
 });
 
-app.get('/api/users/signin', async ( req, res) => {
+app.post('/api/users/login', async ( req, res) => {
     try {
         const { username, password } = req.body;
         // 혹시 에러가 날 경우 username: username를 username로 수정해 볼 것 
@@ -93,7 +93,7 @@ app.get('/api/users/signin', async ( req, res) => {
         // 1. bcrypt.compare는 bcrypt 라이브러리의 '약속된 함수'입니다.
         // 프론트에서 받은 평문 password와 DB의 암호화된 user.password를 비교합니다.
         const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
+        if (!isMatch) {
             return res.status(400).json({ message: '로그인 정보를 확인하세요.'});
         }
         

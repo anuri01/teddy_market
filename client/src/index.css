@@ -98,7 +98,8 @@ body {
   padding: 0 1.5rem;
   border-radius: 8px;
   border: 1px solid transparent;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
+  font-family: inherit;
   font-weight: bold;
   cursor: pointer;
   text-decoration: none;

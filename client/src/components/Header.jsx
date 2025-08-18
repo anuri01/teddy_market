@@ -7,7 +7,7 @@ import './Header.css';
 
 // ---2. 컴포넌트 준비
 function Header() {
-    const { isLoggedIn, logout } = useUserStore;
+    const { isLoggedIn, logout } = useUserStore();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ return (
             { isLoggedIn ? (
                 <>
                     <Link to="/profile">내 정보</Link>
-                    <button onClick={handleLogout} className="nav-botton">로그아웃</button>
+                    <button onClick={handleLogout} className="nav-button">로그아웃</button>
                 </>
             ) : (
                 <>
