@@ -6,7 +6,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
-// import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
+import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 // import logoFooter from '../public/images/logo_footer.png';
@@ -34,7 +34,7 @@ function App() {
           <Route path='/signup' element={ isLoggedIn ? <Navigate to="/" /> : <SignupPage />}></Route>
           {/* 👇 콜백 경로 추가 */}
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
-          {/* <Route path='/auth/kakao/callback' element={<KakaoCallback />} /> */}
+          <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
         </Routes>
       </main>
       <Footer />

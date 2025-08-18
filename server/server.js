@@ -67,7 +67,7 @@ async ( accessToken, refreshToken, profile, done ) => {
     try {
         // 1. 네이버가 제공한 공유 ID(profile.id)로 우리 db에서 사용자를 찾는다. 
         let user = await User.findOne({naverId: profile.id});
-        console.log('네이버 profile 객체의 내용', profile); // 객체 내용 확인용 로그
+        // console.log('네이버 profile 객체의 내용', profile); // 객체 내용 확인용 로그
 
         // 2. 사용자가 없다면 네이버 정보를 바탕으로 가입진행
         if (!user) {
@@ -106,7 +106,7 @@ passport.use(new KakaoStrategy ({
 // 카카오로부터 프로필 정보를 성공적으로 받아왔을 때, passport가 자동으로 실행하는 함수입니다.
 async ( accessToken, refreshToken, profile, done ) => {
     try {
-        let user = await User.findOne({ kakaoID: profile.id.toString() });
+        let user = await User.findOne({ kakaoId: profile.id.toString() });
         console.log('카카오 profile 객체의 내용', profile); // 객체 내용 확인용 로그
         if (!user) {
             // 2-1. username 중복방지 처리
@@ -120,7 +120,7 @@ async ( accessToken, refreshToken, profile, done ) => {
             }
             user = new User({
                 username: finalUsername, // 카카오 닉네임을 우리 서비스의 username으로 사용
-                kakaoId: profile.id, // 카카오 고유 id는 별도 저장
+                kakaoId: profile.id.toString(), // 카카오 고유 id는 별도 저장
             });
             await user.save();
             
