@@ -55,7 +55,7 @@ app.post('/api/users/signup', async (req, res) => {
     try {
         // 1. 프론트엔드에서 보낸 데이터를 req.body에서 꺼냅니다.
         // { username, password }는 우리가 프론트엔드와 약속한 데이터 형식입니다.
-        const { username, password, email, phonenumner } = req.body;
+        const { username, password, email, phoneNumber } = req.body;
         if (!username || !password ) {
             return res.status(400).json({message: '사용자 이름과 비밀번호는 필수 입니다.'});
         }
@@ -67,7 +67,7 @@ app.post('/api/users/signup', async (req, res) => {
         }
         
         // 3. User 모델(설계도)로 새로운 user 인스턴스를 만든다. 
-        const user = new User({ username, password, email, phonenumner });
+        const user = new User({ username, password, email, phoneNumber });
 
         // 4. user.save()를 호출하면, User.js에 만들어둔 pre-save 훅이 먼저 실행되어
         //    비밀번호를 암호화하고, 그 후에 DB에 저장됩니다.

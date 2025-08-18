@@ -20,25 +20,31 @@ body {
   margin: 0 auto;
   background-color: #ffffff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
 }
 
-.app-header {
+.app-main {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+/* 헤더 css 분리 */
+/* .app-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 1.5rem;
   height: 4.5rem;
   border-bottom: 1px solid #e9ecef;
-}
+} */
 
-.app-main {
-  padding: 1.5rem;
-}
 
-/* 헤더 내부 요소 */
-.logo a {
+
+/* 헤더 내부 요소 이요소도 분리 */
+/* .logo a {
   font-size: 1.5rem;
-  font-weight: 800; /* 더 굵게 */
+  font-weight: 800; 
   text-decoration: none;
   color: #212529;
 }
@@ -58,10 +64,10 @@ body {
   font-size: 1rem;
   font-family: inherit;
   cursor: inherit;
-}
+} */
 
 /* 공통 폼 스타일 */
-.auth-page h2, .post-creator h3 {
+.post-creator h3 {
   font-size: 1.8rem;
   text-align: conter;
   margin-bottom: 2rem;
@@ -69,11 +75,11 @@ body {
 
 .form-input, .form-textarea {
   width: 100%;
-  padding: 0.8rem 1rem;
+  padding: 0.8rem 0.5rem;
   border: 1px solid #dee2e6;
   border-radius: 8px;
-  margin-bottom: 1rem;
-  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
   font-family: inherit;
 }
 
@@ -100,9 +106,9 @@ body {
 }
 
 .button-primary {
-  background-color: #3498db; /* 피그마의 파란색 버튼 */
+  background-color: #31BBE5; /* 피그마의 파란색 버튼 */
   color: white;
-  border-color: #3498db;
+  border-color: #31BBE5;
 }
 
 .button-primary_naver {
@@ -159,3 +165,4 @@ body {
   padding: 0.8rem 1.5rem;
   border-radius: 50px;
 }
+

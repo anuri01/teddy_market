@@ -1,0 +1,39 @@
+/* Header.css */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  height: 4rem;
+  /* border-bottom: 1px solid #e9ecef; */
+  background-color: white;
+}
+
+.header-left .logo img {
+  height: 2rem; /* 로고 이미지 높이 */
+  display: block; /* 이미지 아래 불필요한 여백 제거 */
+}
+
+.header-left .page-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2C9EC1;
+  margin: 0;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navigation a, .navigation .nav-button {
+  text-decoration: none;
+  color: #495057;
+  font-weight: 500;
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  font-family: inherit;
+  cursor: pointer;
+}

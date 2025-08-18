@@ -1,0 +1,46 @@
+/* auth-page 클래스를 가진 div (페이지 전체 컨테이너) */
+.auth-page {
+  display: flex; /* 자식 요소들을 정렬하기 위해 Flexbox 사용 */
+  flex-direction: column; /* 자식 요소들을 세로로 쌓음 */
+}
+
+/* auth-page 안의 h2 태그 (페이지 제목) */
+.auth-page h2 {
+  font-size: 1rem;
+  font-weight: 550;
+  text-align: center; /* Figma 디자인처럼 가운데 정렬 */
+  margin: 0 0 0 0;
+}
+
+/* auth-description 클래스를 가진 p 태그 (설명 텍스트) */
+.auth-description {
+  font-size: 0.875rem;
+  text-align: center;
+  font-weight: 350;
+  line-height: 1.3rem;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+/* form-section-title 클래스를 가진 p 태그 (소제목) */
+.form-section-title {
+  font-size: 1rem;
+  font-weight: 500;
+  /* color: #495057; */
+  margin-bottom: 0.875rem;
+}
+
+/* auth-link-text 클래스를 가진 p 태그 (하단 링크) */
+.auth-link-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #868e96;
+}
+
+.auth-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
