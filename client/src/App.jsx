@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
+// import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 // import logoFooter from '../public/images/logo_footer.png';
@@ -16,7 +17,8 @@ import './index.css'
 
 function App() {
   const { isLoggedIn } = useUserStore();
-  
+  // const navigate = useNavigate(); // 👈 페이지 이동을 위한 navigate 함수 준비
+
   return (
     <div className='app-container'>
         <Toaster position="top-center" /> {/* 👈 앱 최상단에 Toaster '알림판' 설치 */}
@@ -32,6 +34,7 @@ function App() {
           <Route path='/signup' element={ isLoggedIn ? <Navigate to="/" /> : <SignupPage />}></Route>
           {/* 👇 콜백 경로 추가 */}
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
+          {/* <Route path='/auth/kakao/callback' element={<KakaoCallback />} /> */}
         </Routes>
       </main>
       <Footer />

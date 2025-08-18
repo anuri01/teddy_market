@@ -35,7 +35,7 @@ const useUserStore = create((set) => { // 로직을 통해 state가 결정되므
         },
 
         logout: () => {
-            localStorage.removeItem(token);
+            localStorage.removeItem('token');
             set({ token: null, isLoggedIn: false, user: null});
         },
     };

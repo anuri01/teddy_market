@@ -125,6 +125,7 @@ function SignupPage() {
                 <button type="submit" className="button button-primary">회원가입</button>
                 {/* a 태그를 사용해 백엔드의 네이버 로그인 시작 API로 이동시킵니다. */}
                 <a href={`${backendUrl}/users/naver`} className="button button-primary_naver">네이버로 회원가입</a>
+                <a href={`${backendUrl}/users/kakao`} className="button button-primary_kakao">카카오로 회원가입</a>
                 </div>
             </form>
              <p className="auth-link-text">이미 계정이 있으신가요? <Link to="/login">로그인</Link></p>

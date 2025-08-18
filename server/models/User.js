@@ -27,6 +27,12 @@ const userSchema = new mongoose.Schema({
         unique: true,
         sparse: true,
     },
+    kakaoId: { // 👈 카카오 고유 ID를 위한 필드 추가
+        type: String,
+        unique: true,
+        sparse: true,
+    }
+
 }, { timestamps: true}); // createdAt, updateAt 자동생성
 
 // --- 3. 설계도에 규칙(pre-save hook) 추가 ---

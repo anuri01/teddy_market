@@ -11,6 +11,7 @@ import jwt from 'jsonwebtoken';
 // import { Server } from 'socket.io';
 import passport from 'passport';
 import { Strategy as NaverStrategy } from 'passport-naver'; // Naver passport 임포트
+import { Strategy as KakaoStrategy } from 'passport-kakao'; // Kakao passport 임포트
 import User from './models/User.js'; // User db스키마 임포트
 // (나중에 Product, Chat 모델도 여기에 추가)
 
@@ -72,7 +73,7 @@ async ( accessToken, refreshToken, profile, done ) => {
         if (!user) {
             // 2-1. username 중복방지 처리
             const username = profile.displayName;
-            const existingUser = await User.findOne(username);
+            const existingUser = await User.findOne({ username: username} );
             let finalUsername = username;
 
             if (existingUser) {
@@ -94,6 +95,65 @@ async ( accessToken, refreshToken, profile, done ) => {
 }
 ))
 
+// --- 👇 Passport 카카오 전략 설정 (새로 추가) ---
+// passport.use()는 passport에 새로운 로그인 방식을 등록하는 '약속된 함수'입니다.
+passport.use(new KakaoStrategy ({
+     // KakaoStrategy는 clientID와 callbackURL을 '약속된 이름'으로 넣어주길 기대합니다.
+    clientID: process.env.KAKAO_REST_API_KEY,
+    callbackURL: '/api/users/kakao/callback' // 카카오 개발자 사이트에 등록한 주소
+},
+
+// 카카오로부터 프로필 정보를 성공적으로 받아왔을 때, passport가 자동으로 실행하는 함수입니다.
+async ( accessToken, refreshToken, profile, done ) => {
+    try {
+        let user = await User.findOne({ kakaoID: profile.id.toString() });
+        console.log('카카오 profile 객체의 내용', profile); // 객체 내용 확인용 로그
+        if (!user) {
+            // 2-1. username 중복방지 처리
+            const username = profile.displayName; // 에러날 경우 실제 키값 확인 필요
+            // console.log('디스플레이 네임 저장', username);
+            const existingUser = await User.findOne({ username: username });
+            let finalUsername = username;
+            
+            if (existingUser) {
+                finalUsername = `${username}_${profile.id.toString().substring(0, 3)}`;
+            }
+            user = new User({
+                username: finalUsername, // 카카오 닉네임을 우리 서비스의 username으로 사용
+                kakaoId: profile.id, // 카카오 고유 id는 별도 저장
+            });
+            await user.save();
+            
+        }
+        return done(null, user);
+    } catch (err) {
+        console.error("!!! 카카오 로그인 처리 중 에러 발생 !!!", err);
+        return done(err);
+    }
+}
+));
+
+// 1. 로그인 시작 라우트 ('/api/users/kakao'로 접속하면 카카오 로그인 창으로 보냄)
+app.get('/api/users/kakao', passport.authenticate('kakao'));
+
+// 2. 로그인 성공 후 Callback 라우트
+app.get('/api/users/kakao/callback',
+     // passport.authenticate가 중간에서 카카오 정보를 받아 위에서 설정한 callback 함수를 실행합니다.
+    passport.authenticate('kakao', { session: false, failureRedirect: '/login'}),
+    ( req, res ) => {
+    // 3. callback 함수에서 done(null, user)로 전달받은 user 정보가 req.user에 들어있습니다.
+    // 이 정보로 우리 앱의 JWT 토큰을 생성합니다.
+
+    const token = jwt.sign(
+        { id: req.user._id, username: req.user.username },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h'}
+       );
+        // 4. 생성된 토큰을 URL 쿼리 파라미터에 담아, 프론트엔드의 콜백 처리 페이지로 리디렉션시킵니다.
+        // (이 부분은 나중에 프론트엔드에서 토큰을 받을 페이지를 만들고 연결합니다.)
+        res.redirect(`${process.env.FRONTEND_URL}/auth/kakao/callback?token=${token}`);
+    }
+);
 // --- 👇 네이버 로그인 API 라우트 (새로 추가) ---
 // 1. 로그인 시작 라우트 ('/api/users/naver'로 접속하면 네이버 로그인 창으로 보냄)
 app.get('/api/users/naver', passport.authenticate('naver', { authtype: 'reprompt'}));
