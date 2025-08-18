@@ -5,6 +5,7 @@ import Header from './components/Header'; // 헤더 컴포넌트 임포트
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 // import logoFooter from '../public/images/logo_footer.png';
@@ -29,6 +30,8 @@ function App() {
           <Route path='/' element={<HomePage />}></Route>
           <Route path='/login' element={ isLoggedIn ? <Navigate to="/" /> : <LoginPage />}></Route>
           <Route path='/signup' element={ isLoggedIn ? <Navigate to="/" /> : <SignupPage />}></Route>
+          {/* 👇 콜백 경로 추가 */}
+          <Route path='/auth/naver/callback' element={<NaverCallback />} />
         </Routes>
       </main>
       <Footer />

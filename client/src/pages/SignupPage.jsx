@@ -12,6 +12,7 @@ function SignupPage() {
     const [ password, setPassword ] = useState('');
     const [ email, setEmail ] = useState('');
     const [ phoneNumber, setPhoneNumber ] = useState('');
+    const backendUrl = import.meta.env.VITE_API_URL;
     // const [ error, setError ] = useState(''); 토스트 팝업으로 에러를 처리하므로 현재 사용하지 않음
 
     const { isLoggedIn }  = useUserStore();
@@ -122,7 +123,8 @@ function SignupPage() {
                 
                 <div className="auth-button-group">
                 <button type="submit" className="button button-primary">회원가입</button>
-                <button type="button" className="button button-primary_naver">네이버로 회원가입</button>
+                {/* a 태그를 사용해 백엔드의 네이버 로그인 시작 API로 이동시킵니다. */}
+                <a href={`${backendUrl}/users/naver`} className="button button-primary_naver">네이버로 회원가입</a>
                 </div>
             </form>
              <p className="auth-link-text">이미 계정이 있으신가요? <Link to="/login">로그인</Link></p>

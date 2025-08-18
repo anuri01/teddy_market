@@ -9,8 +9,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 // import http from 'http'; // nodejs에서 기본제공하는 http 모듈임
 // import { Server } from 'socket.io';
-// import passport from 'passport';
-// import { Strategy as NaverStrategy } from 'passport-naver'; // Naver passport 임포트
+import passport from 'passport';
+import { Strategy as NaverStrategy } from 'passport-naver'; // Naver passport 임포트
 import User from './models/User.js'; // User db스키마 임포트
 // (나중에 Product, Chat 모델도 여기에 추가)
 
@@ -49,6 +49,71 @@ const authMiddleware = async ( req, res, next) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.'});
     }
 };
+
+// Passport 설정(네이버 Strategy 활용)
+// passport.use()는 passport에 새로운 로그인 방식을 등록하는 '약속된 함수'입니다.
+passport.use(new NaverStrategy({
+     // NaverStrategy는 이 객체 안에 clientID, clientSecret, callbackURL을
+     // '약속된 이름'으로 넣어주길 기대합니다.
+     clientID: process.env.NAVER_CLIENT_ID,
+     clientSecret: process.env.NAVER_CLIENT_SECRET,
+     callbackURL: '/api/users/naver/callback'
+
+},
+
+// 네이버로부터 프로필 정보를 성공적으로 받아올 경우 자동으로 실행되는 함수
+async ( accessToken, refreshToken, profile, done ) => {
+    try {
+        // 1. 네이버가 제공한 공유 ID(profile.id)로 우리 db에서 사용자를 찾는다. 
+        let user = await User.findOne({naverId: profile.id});
+        console.log('네이버 profile 객체의 내용', profile); // 객체 내용 확인용 로그
+
+        // 2. 사용자가 없다면 네이버 정보를 바탕으로 가입진행
+        if (!user) {
+            // 2-1. username 중복방지 처리
+            const username = profile.displayName;
+            const existingUser = User.findOne(username);
+            let finalUsername = username;
+
+            if (existingUser) {
+                // 중복 방지: 네이버 id를 붙이거나 랜덤값 추가
+                finalUsername = `${username}_naver`;
+            }
+
+            user = new User({
+                username: finalUsername, // 네이버 닉네임을 우리 서비스의 username으로 사용
+                naverId: profile.id, // 네이버 고유 ID는 별도 필드에 저장
+            });
+            await user.save();
+        }
+        // 3. 찾거나 새로 만든 사용자 정보를 다음 단계로 전달합니다. done()은 '작업 완료' 신호입니다.
+        return done(null, user);
+    } catch (error) {
+        return done(error);
+    }
+}
+))
+
+// --- 👇 네이버 로그인 API 라우트 (새로 추가) ---
+// 1. 로그인 시작 라우트 ('/api/users/naver'로 접속하면 네이버 로그인 창으로 보냄)
+app.get('/api/users/naver', passport.authenticate('naver', { authtype: 'reprompt'}));
+
+// 2. 로그인 성공 후 Callback 라우트
+app.get('/api/users/naver/callback',
+    // passport.authenticate가 중간에서 네이버 정보를 받아 위에서 설정한 callback 함수를 실행합니다.
+    passport.authenticate('naver', { session: false, failureRedirect: '/login'}),
+    // passport인증에 성공하면, ( req, res) {....} 함수가 실행됨
+    async ( req, res ) => {
+        const token = jwt.sign(
+            { id: req.user._id, username: req.user.username },
+            process.env.JWT_SECRET,
+            { expiresIn : '1h'}
+        );
+        // 4. 생성된 토큰을 URL 쿼리 파라미터에 담아, 프론트엔드의 콜백 처리 페이지로 리디렉션시킵니다.
+        res.redirect(`http://localhost:5173/auth/naver/callback?token=${token}`);
+    }
+)
+
 
 // 회원가입 라우트 
 app.post('/api/users/signup', async (req, res) => {

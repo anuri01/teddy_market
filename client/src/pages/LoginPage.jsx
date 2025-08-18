@@ -11,6 +11,7 @@ function LoginPage() {
 
     const navigate = useNavigate();
     const { isLoggedIn, setToken }  = useUserStore();
+    const backendUrl = import.meta.env.VITE_API_URL;
 
     useEffect( () => {
         if( isLoggedIn ) {
@@ -58,7 +59,8 @@ function LoginPage() {
                 />
                 <div className="auth-button-group">
                     <button type="submit" className="button button-primary">로그인</button>
-                    <button type="button" className="button button-primary_naver">네이버로 로그인</button>
+                    {/* a 태그를 사용해 백엔드의 네이버 로그인 시작 API로 이동시킵니다. */}
+                    <a href={`${backendUrl}/users/naver`} className="button button-primary_naver">네이버로 로그인</a>
                 </div>
             </form>
             <p className="auth-link-text">아직 계정이 없으신가요? <Link to="/signup">회원가입</Link></p>
