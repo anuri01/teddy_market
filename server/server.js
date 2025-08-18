@@ -72,12 +72,12 @@ async ( accessToken, refreshToken, profile, done ) => {
         if (!user) {
             // 2-1. username 중복방지 처리
             const username = profile.displayName;
-            const existingUser = User.findOne(username);
+            const existingUser = await User.findOne(username);
             let finalUsername = username;
 
             if (existingUser) {
                 // 중복 방지: 네이버 id를 붙이거나 랜덤값 추가
-                finalUsername = `${username}_naver`;
+                finalUsername = `${username}_${profile.id.substring(0, 5)}`; // id 일부를 잘라서 뒤로 붙임
             }
 
             user = new User({
@@ -110,7 +110,7 @@ app.get('/api/users/naver/callback',
             { expiresIn : '1h'}
         );
         // 4. 생성된 토큰을 URL 쿼리 파라미터에 담아, 프론트엔드의 콜백 처리 페이지로 리디렉션시킵니다.
-        res.redirect(`http://localhost:5173/auth/naver/callback?token=${token}`);
+        res.redirect(`${process.env.FRONTEND_URL}/auth/naver/callback?token=${token}`);
     }
 )
 
