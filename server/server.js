@@ -1,6 +1,5 @@
 //const bcrypt = require('bcryptjs'); // 기본 require 방식
 // ES Module 사용(리액트와 맞춤)
-
 import 'dotenv/config'; // dotenv 설정 방식이 변경됨
 import express from 'express';
 import mongoose from 'mongoose';
@@ -13,6 +12,7 @@ import passport from 'passport';
 import { Strategy as NaverStrategy } from 'passport-naver'; // Naver passport 임포트
 import { Strategy as KakaoStrategy } from 'passport-kakao'; // Kakao passport 임포트
 import User from './models/User.js'; // User db스키마 임포트
+import Product from './models/Product.js'; // Product db스키마 임포트
 // (나중에 Product, Chat 모델도 여기에 추가)
 
 //express 앱 설정
@@ -205,6 +205,7 @@ app.post('/api/users/signup', async (req, res) => {
     }
 });
 
+// 로그인 라우트
 app.post('/api/users/login', async ( req, res) => {
     try {
         const { username, password } = req.body;
@@ -238,6 +239,11 @@ app.post('/api/users/login', async ( req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.'});
     }
 });
+
+// 상품등록 라우트
+app.post('/api/products', authMiddleware, upload.array('files', 10), async ( req, res ) => {
+    
+})
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
