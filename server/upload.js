@@ -24,9 +24,12 @@ const upload = multer({
         bucket: process.env.S3_BUCKET_NAME,
         acl: 'public-read',
         key: function( req, file, cd ) {
+            // file.fieldname은 multer가 알려주는 파일의 '이름표'('mainImage' 또는 'attachments')입니다.
+            // 이름표에 따라 파일을 다른 폴더에 저장합니다.
             // 1. 원본 파일 이름을 UTF-8 NFC 형식으로 정규화(normalize)합니다.
+            const folder = file.fieldname === 'mainImage' ? 'products/' : 'attchments/'
             const decodedName = Buffer.from(file.originalname, 'latin1').toString('utf8');
-            createBrotliCompress(null, `images/${Date.now()}_${path.basename(decodedName)}`);
+            createBrotliCompress(null, `${folder}/${Date.now()}_${path.basename(decodedName)}`);
         },
     }),
     limits: { fileSize: 5 * 1024 * 1024}, // 5MB로 제한

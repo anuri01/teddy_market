@@ -241,9 +241,41 @@ app.post('/api/users/login', async ( req, res) => {
 });
 
 // 상품등록 라우트
-app.post('/api/products', authMiddleware, upload.array('files', 10), async ( req, res ) => {
-    
-})
+// upload.array를 upload.fields로 변경합니다. 1개일때 single(), 1개 이름에 여러개 파일일때 array 사용
+app.post('/api/products', authMiddleware, upload.fields([
+    { name: 'mainImage', maxCount: 1}, { name: 'attachments', maxCount: 5}]), 
+        async ( req, res ) => {
+            
+            try {
+                const { title, content, price, saleprice, quantity } = req.body;
+                // (질문에 대한 답) 대표 이미지는 req.files.mainImage 배열의 첫 번째 요소입니다.
+                const mainImage = req.files.mainImage ? req.files.mainImage[0] : null;
+                if (!title || !content || !price || !mainImage) {
+                    return res.status(400).json({message: '제목, 내용, 가격, 상품이미지는 필수 항목입니다.'});
+                }
+                // req.files는 이제 { mainImage: [...], attachments: [...] } 형태의 객체입니다.
+                const attachments = req.files.attachments ? req.files.attachments.map(file => ({ 
+                    url: file.location,
+                    name: Buffer.from(file.originalname, 'latin1').toString('utf8'), // 한글 파일명 복원
+                    type : file.mimetype,
+                })) : [];
+                const newProduct = new Product({
+                    title,
+                    content,
+                    price,
+                    mainImageUrl: mainImage.location,
+                    files: attachments,
+                    salePrice: saleprice,
+                    quantity: quantity,
+                    seller: req.user.id,
+                });
+                await newProduct.save();
+                res.status(201).json({newProduct, message: '상품 등록 완료'});
+            } catch (error) {
+                console.error("상품 등록 중 에러 발생", error);
+                res.status(500).json({message: '서버 오류가 발생했습니다.'});
+            }
+});
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)

@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema({
     // 판매자 정보 (User 모델과 연결, 필수)    
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
      // 상품 썸네일 이미지 URL
-    thumbnailUrl: {type: String,},
+    mainImageUrl: {type: String, required: true },
 
 }, {timeseries: true}); // createdAt, updatedAt 자동 생성 옵션
 
