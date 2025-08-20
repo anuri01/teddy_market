@@ -4,14 +4,18 @@ import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
 // import TiptapEditor from '../components/TiptapEditor'; 작업전
 import useUserStore from "../store/userStore";
+import useNumberInput from "../hooks/useNumberInput";
 import './ProductEditor.css';
 
 function ProductEditor() {
     const [ title, setTitle ] = useState('');
     const [ content, setContent ] = useState('');
-    const [ price, setPrice ] = useState();
-    const [ salePrice, setSalePrice] = useState();
-    const [ quantity, setQuantity ] = useState();
+    const [ price, displayPrice, handlePriceChange, setPrice ] = useNumberInput();
+    const [ salePrice, displaySalePrice, handleSalePriceChange, setSalePrice ] = useNumberInput();
+    const [ quantity, displayQuantity, handleQuantityChange, setQuantity ] = useNumberInput();
+    // 표시되는 값에 ,를 넣기 위해 커스텀 훅으로 변경. 
+    // const [ salePrice, setSalePrice] = useState(); 
+    // const [ quantity, setQuantity ] = useState();
     
     // const [ mainImageUrl, setMainImageUrl ] = useState(''); 프론트에서는 서버에 필요한 정보를 담아 요청만 보내고 저장과 저장후 url 서버에서 처리하기 때문에 해당 상태는 필요가 없음. 
     const [ mainImageFile, setMainImageFile ] = useState(null) // 대표이미지 파일 객체
@@ -30,20 +34,66 @@ function ProductEditor() {
         }        
     };
 
-    // 숫자 입력창을 위한 공통 핸들러 함수
-  const handleNumberChange = (e, setter) => {
-    const value = e.target.value;
-    // 숫자가 아니거나 음수이면 입력을 무시합니다.
-    if (isNaN(value) || value < 0) {
-      return;
-    }
-    setter(value);
-  };
+// 커스텀 훅으로 이관
+// 숫자 입력창을 위한 공통 핸들러 함수
+//   const handleNumberChange = (e, setter) => {
+//     const value = e.target.value;
+//     // 숫자가 아니거나 음수이면 입력을 무시합니다.
+//     if (isNaN(value) || value < 0) {
+//       return;
+//     }
+//     setter(value);
+//   };
 
+    // 첨부 파일 선택 시 실행될 함수 (e) 이벤트 객체를 받아.. files의 내용을 배열로 받아 입력. 
+    const handleAttachment = (e) => { // 파일첨부 후 실행(파일 선택 창에서 파일 선택 후 닫을때 실행)
+        setAttachmentFilles(prevFiles => [...prevFiles, Array(e.target.files)]);
+    };
+
+    
+    // 첨부파일 삭제시 실행될 함수 x 버튼을 눌렀을떄 실행
+    const handleDeleteAttachment = (indexToRemove) => { // 파일 인덱스를 받아 해당 파일 인데스를 제외하고 다시 배열 구서 
+        setAttachmentFilles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+    };
+    
+    // '작성 완료' 버튼 눌렀을 때 실행될 함수 
     const handleSubmit = async (e) => {
     e.preventDefault();
-    // ... (상품 등록 로직은 다음 단계에서 구현)
-    toast.success('상품이 등록되었습니다!');
+
+    // form 데이터 객체를 만드든 후 서버와 약속된 이름을 데이터 추가
+    // 배열의 경우 forEach로 배열을 순회하면서 데이터 추가 
+    const formData = new FormData();
+
+    if(!title, !content, !mainImageFile) {
+        toast.error('제목, 내용, 상품이미지는 필수 입니다.');
+    }
+
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('price', price);
+    formData.append('quantity', quantity);
+    formData.append('salePrice', salePrice);
+    if (mainImageFile) {
+        formData.append('mainImage', mainImageFile)
+    }
+    if (attachmentFilles.length > 0) {
+        attachmentFilles.forEach(file => {
+            formData.append('attachments', file);
+        })
+    };
+
+    try {
+        if (isEditMode) {
+            // 수정 로직 (차후 구현)
+        } else {
+            await api.post('/products', formData);
+        }
+         toast.success('상품이 등록되었습니다!');
+
+    } catch (error) {
+        toast.error('상품 등록에 실패했어요.');
+        console.error(error);
+    }
   };
 
     return (
@@ -76,23 +126,23 @@ function ProductEditor() {
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                         />
+                         <input 
+                         id="quantity"
+                         type="number"
+                         className="form-input"
+                         placeholder="상품수량을 입력하세요."
+                         min="0"
+                         value={quantity}
+                         onChange={(e) => setQuantity(e.target.value < 0 ? 0 : e.target.value)} 
+                         />
                         <input 
-                            min="0"
-                            className="form-input"
-                            id="quantity"
-                            type="number"
-                            placeholder="상품수량을 입력하세요"
-                            value={quantity}
-                            onChange={(e) => handleNumberChange(e.target.value, setQuantity())}
-                        />
-                        <input 
-                            min="0"
+                            // min="0"
                             id="price"
-                            type="number"
+                            type="text"
                             className="form-input"
                             placeholder="가격을 입력하세요."
-                            value={price}
-                            onChange={(e) => handleNumberChange(e.target.value, setPrice())}
+                            value={displayPrice}
+                            onChange={handlePriceChange}
                         />
                         <div className="file-upload-group">
                             {/* (질문에 대한 답) mainImageFile이 있으면 그 name 속성을, 없으면 플레이스홀더를 보여줍니다. */}
@@ -110,13 +160,13 @@ function ProductEditor() {
             <section className="form-section">
                 <h3>부가 정보</h3>
                     <input 
-                    min="0"
+                    // min="0"
                     id="salePrice"
-                    type="number"
+                    type="text"
                     className="form-input"
                     placeholder="할인 가격 (선택 사항)"
-                    value={salePrice}
-                    onChange={(e) => handleNumberChange(e.target.value, setSalePrice())}
+                    value={displaySalePrice}
+                    onChange={handleSalePriceChange}
                      />
             </section>
             <section className="form-section">

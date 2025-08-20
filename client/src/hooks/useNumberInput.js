@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 //숫자 입력과 콤마 포맷팅을 위한 커스텀 훅
-
+// 수정일 경우 initalValue를 커스텀 훅을 사용하는 쪽으로 부터 전달 받음.
 function useNumberInput(initalValue = '') {
     // 실제 입력값을 저장할 상태
     const [ realValue, setRealValue ] = useState(initalValue);

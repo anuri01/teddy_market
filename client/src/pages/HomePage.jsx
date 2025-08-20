@@ -15,11 +15,11 @@ function HomePage() {
               <Link to="/write" className="button button-primary add-product-button">상품 등록</Link>
             </div>
            )}
-          {isLoggedIn && (
+          {/* {isLoggedIn && (
             <div className="add-product-button-container">
               <Link to="/write1" className="button button-primary add-product-button">상품 등록2</Link>
             </div>
-           )}
+           )} */}
         </div>
     );
 }
