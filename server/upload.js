@@ -8,12 +8,14 @@ import path from 'path'; // Node.js에 내장된 파일 경로 처리 도구
 // .env 파일에 저장된 AWS 출입증과 지역 정보를 사용합니다.
 
 const s3 = new S3Client({
-    credentials: {
+        credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
     },
     region: process.env.AWS_REGION,
 });
+// 디버깅 로그
+console.log('s3 인스턴스 생성', s3);
 
 // --- 3. 업로드 기능(미들웨어) 생성 ---
 // multer 라이브러리를 사용해 'upload'라는 이름의 업로드 처리반을 만듭니다.
@@ -23,14 +25,15 @@ const upload = multer({
         s3 : s3,
         bucket: process.env.S3_BUCKET_NAME,
         acl: 'public-read',
-        key: function( req, file, cd ) {
+        key: function( req, file, cb ) {
             // file.fieldname은 multer가 알려주는 파일의 '이름표'('mainImage' 또는 'attachments')입니다.
             // 이름표에 따라 파일을 다른 폴더에 저장합니다.
             // 1. 원본 파일 이름을 UTF-8 NFC 형식으로 정규화(normalize)합니다.
             const folder = file.fieldname === 'mainImage' ? 'products/' : 'attachments/'
             const decodedName = Buffer.from(file.originalname, 'latin1').toString('utf8');
-            createBrotliCompress(null, `${folder}/${Date.now()}_${path.basename(decodedName)}`);
+            cb(null, `${folder}/${Date.now()}_${path.basename(decodedName)}`);
         },
+         contentType: multerS3.AUTO_CONTENT_TYPE, // 파일 타입 자동 감지
     }),
     limits: { fileSize: 5 * 1024 * 1024}, // 5MB로 제한
 });

@@ -19,7 +19,7 @@ function ProductEditor() {
     
     // const [ mainImageUrl, setMainImageUrl ] = useState(''); 프론트에서는 서버에 필요한 정보를 담아 요청만 보내고 저장과 저장후 url 서버에서 처리하기 때문에 해당 상태는 필요가 없음. 
     const [ mainImageFile, setMainImageFile ] = useState(null) // 대표이미지 파일 객체
-    const [ attachmentFilles, setAttachmentFilles ] = useState([]); // 첨부 파일 목록
+    const [ attachmentFiles, setAttachmentFilles ] = useState([]); // 첨부 파일 목록
 
     const navigate = useNavigate();
     const { productId } = useParams(); // useParams 훅으로 url 파라미터에서 상품id를 찾아서 저장
@@ -46,13 +46,19 @@ function ProductEditor() {
 //   };
 
     // 첨부 파일 선택 시 실행될 함수 (e) 이벤트 객체를 받아.. files의 내용을 배열로 받아 입력. 
-    const handleAttachment = (e) => { // 파일첨부 후 실행(파일 선택 창에서 파일 선택 후 닫을때 실행)
-        setAttachmentFilles(prevFiles => [...prevFiles, Array(e.target.files)]);
+    const handleAttachmentChange = (e) => { // 파일첨부 후 실행(파일 선택 창에서 파일 선택 후 닫을때 실행)
+        const newFiles = Array.from(e.target.files); // Filelist객체로 오므로 배열로 변환
+        if (attachmentFiles.length + newFiles.length > 5) {
+            toast.error('첨부파일은 5개까지만 가능합니다.');
+            return;
+        }
+        setAttachmentFilles(prevFiles => [...prevFiles, ...newFiles]);
+
     };
 
     
     // 첨부파일 삭제시 실행될 함수 x 버튼을 눌렀을떄 실행
-    const handleDeleteAttachment = (indexToRemove) => { // 파일 인덱스를 받아 해당 파일 인데스를 제외하고 다시 배열 구서 
+    const handleRemoveAttachment = (indexToRemove) => { // 파일 인덱스를 받아 해당 파일 인데스를 제외하고 다시 배열 구서 
         setAttachmentFilles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
     };
     
@@ -66,6 +72,7 @@ function ProductEditor() {
 
     if(!title, !content, !mainImageFile) {
         toast.error('제목, 내용, 상품이미지는 필수 입니다.');
+        return;
     }
 
     formData.append('title', title);
@@ -76,8 +83,8 @@ function ProductEditor() {
     if (mainImageFile) {
         formData.append('mainImage', mainImageFile)
     }
-    if (attachmentFilles.length > 0) {
-        attachmentFilles.forEach(file => {
+    if (attachmentFiles.length > 0) {
+        attachmentFiles.forEach(file => {
             formData.append('attachments', file);
         })
     };
@@ -89,6 +96,7 @@ function ProductEditor() {
             await api.post('/products', formData);
         }
          toast.success('상품이 등록되었습니다!');
+         navigate('/');
 
     } catch (error) {
         toast.error('상품 등록에 실패했어요.');
@@ -173,15 +181,23 @@ function ProductEditor() {
                 <h3>파일 첨부</h3>
                 <div className="attachments-group">
                 {/* <p className="form-input">첨부파일을 선택하세요.</p> */}
-                    <label htmlFor="attachments" className="action-button button-secondary file-attach-button">파일 찾기</label>
+                    <label htmlFor="attachments" className="action-button button-primary file-attach-button">파일 찾기</label>
                     <input 
                     id="attachments"
                     className="file-input"
                     type="file"
                     multiple
+                    onChange={handleAttachmentChange}
                     />
-                    {/* (첨부파일 목록 UI는 나중에 추가) */}
                 </div>
+                    {/* (첨부파일 목록 UI는 나중에 추가) */}
+                    <div className="file-preview-list">
+                        { attachmentFiles.length > 0  ? 
+                            attachmentFiles.map((file, index) => <div key={index} className="file-preview-item">
+                                <span className="file-preview-name">{file.name}</span>
+                                 <button type="button" onClick={() => handleRemoveAttachment(index)} className="file-remove-button">&times;</button>
+                                </div>) : <p className="empty-message">첨부 파일이 없습니다.</p> }
+                    </div>
             </section>
                         <div className="form-actions">
                           <button type="button" className="button button-secondary button-tertiary">취소</button>

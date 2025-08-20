@@ -31,15 +31,15 @@ mongoose.connect(process.env.MONGODB_URI)
 // API라우트 영역
 
 // 인증 미들웨어 - 로그인된 사용자 인증이 필요한 라우트에 사용. 클라이언트가 보낸 헤더 정보에서 토큰을 추출해 인증함
-const authMiddleware = async ( req, res, next) => {
+const authMiddleware = ( req, res, next ) => {
     try {
         const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startWith('Bearer ')) { // 토큰이 있는지 먼저 체크
+        if (!authHeader || !authHeader.startsWith('Bearer ')) { // 토큰이 있는지 먼저 체크
             return res.status(401).json({ message: '인증 토큰이 필요합니다.'}); 
         }
         const token = authHeader.split(' ')[1]; // Bearer 접두어를 구분해 토큰만 저장
         const decoded = jwt.verify(token, process.env.JWT_SECRET); // jwt의 verty 메소드를 이용해 전달받은 토큰 값이 유효한지 비교.(JWT_SECRET 값을 같이 사용)
-        
+         
         // 앞에서 확인했기 때문에 필요없으며, 순서상 맞지 않는 코드임.
         // if (!decoded) {
         //     return res.status(401).json({ message: '토큰이 유효하지 안흡니다.'});
@@ -48,7 +48,7 @@ const authMiddleware = async ( req, res, next) => {
         req.user = { id: decoded.id, username: decoded.username}; // req.user에 디코드된 id와 username을 다시 담는다. 
         return next(); // 인증이 완료되면 다음 과정을 실행하도록 next()를 리턴
     } catch (errro) {
-        res.status(500).json({ message: '서버 오류가 발생했습니다.'});
+        res.status(500).json({ message: '서버 오류가 발생했습니다. 인증'});
     }
 };
 
@@ -250,7 +250,11 @@ app.post('/api/products', authMiddleware, upload.fields([
             try {
                 const { title, content, price, saleprice, quantity } = req.body;
                 // (질문에 대한 답) 대표 이미지는 req.files.mainImage 배열의 첫 번째 요소입니다.
+                // 디버깅 로그
+                console.log('요청 전달', req.body);
                 const mainImage = req.files.mainImage ? req.files.mainImage[0] : null;
+                // 디버깅 로그
+                console.log('이미지파일 전달', mainImage);
                 if (!title || !content || !price || !mainImage) {
                     return res.status(400).json({message: '제목, 내용, 가격, 상품이미지는 필수 항목입니다.'});
                 }
