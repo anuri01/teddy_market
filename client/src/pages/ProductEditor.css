@@ -1,0 +1,123 @@
+
+.product-editor-page {
+  width: 100%;
+}
+
+/* auth-page 안의 h2 태그 (페이지 제목) */
+.product-editor-page h2 {
+  font-size: 1rem;
+  font-weight: 550;
+  text-align: center; /* Figma 디자인처럼 가운데 정렬 */
+  margin: 0 0 0 0;
+}
+
+/* description 클래스를 가진 p 태그 (설명 텍스트) */
+.product-editor-page .description {
+  font-size: 0.875rem;
+  text-align: center;
+  font-weight: 350;
+  line-height: 1.3rem;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.file-input {
+    display: none;
+}
+
+/* .mainimage-group {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+} */
+
+.file-upload-group {
+  display: flex;
+  align-items: center;
+  /* border: 1px solid #dee2e6; */
+  /* border-radius: 8px; */
+  gap: 0.3rem;
+}
+
+.file-name-display {
+  flex-grow: 1;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+  padding: 0.8rem 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  color: #757575;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-label-button {
+  width: auto;
+  /* border-radius: 8px; 오른쪽 모서리만 둥글게 */
+  /* border: none; */
+  /* border-left: 1px solid #dee2e6; */
+}
+
+/* .mainimage-group p {
+    color: #757575; 
+} */
+
+.file-attach-button {
+  width: 100%;
+}
+
+.attachments-group {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+}
+
+.attchmensts-group p {
+    margin: 0;
+}
+
+.form-section p {
+    margin: 0;
+}
+
+/* .form-action {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    align-items: center;
+} */
+
+.form-actions {
+  display: flex;
+  /* justify-content: space-between;  버튼들을 오른쪽으로 정렬 */
+  gap: 0.5rem; /* 버튼 사이 간격 */
+  margin-top: 2rem;
+  border-top: 1px solid #e9ecef;
+  padding-top: 1.5rem;
+}
+
+.form-actions .button-primary {
+  flex: 7; /* 버튼 너비를 내용에 맞게 자동 조절 */
+  padding: 0.8rem 1.5rem;
+}
+
+.form-actions .button-secondary {
+  flex: 3; /* 버튼 너비를 내용에 맞게 자동 조절 */
+  padding: 0.8rem 1.5rem;
+}
+
+/* .form-actions .button {
+  width: 100%;
+} */

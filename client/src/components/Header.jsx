@@ -21,6 +21,7 @@ function Header() {
     const getPageTitle = (pathname) => {
         if ( pathname === '/login' ) return '로그인'
         if ( pathname === '/signup') return '회원가입'
+        if ( pathname === '/write') return '상품등록'
         // 다른 경로도 같은 방식으로 추가할 수있음.
         return '';
     }

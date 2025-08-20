@@ -5,8 +5,11 @@ import Header from './components/Header'; // 헤더 컴포넌트 임포트
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import ProductEditor from './pages/ProductEditor';
+import ProductEditor1 from './pages/ProductEditors1';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
+import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 // import logoFooter from '../public/images/logo_footer.png';
@@ -32,6 +35,8 @@ function App() {
           <Route path='/' element={<HomePage />}></Route>
           <Route path='/login' element={ isLoggedIn ? <Navigate to="/" /> : <LoginPage />}></Route>
           <Route path='/signup' element={ isLoggedIn ? <Navigate to="/" /> : <SignupPage />}></Route>
+          <Route path='/write' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
+          <Route path='/write1' element={ <ProtectedRoute><ProductEditor1 /></ProtectedRoute>}></Route>
           {/* 👇 콜백 경로 추가 */}
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
           <Route path='/auth/kakao/callback' element={<KakaoCallback />} />

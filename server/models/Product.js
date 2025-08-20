@@ -24,6 +24,6 @@ const productSchema = new mongoose.Schema({
      // 상품 썸네일 이미지 URL
     mainImageUrl: {type: String, required: true },
 
-}, {timeseries: true}); // createdAt, updatedAt 자동 생성 옵션
+}, {timestamps: true}); // createdAt, updatedAt 자동 생성 옵션
 
 export default mongoose.model('Product', productSchema);

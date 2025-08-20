@@ -13,6 +13,7 @@ import { Strategy as NaverStrategy } from 'passport-naver'; // Naver passport �
 import { Strategy as KakaoStrategy } from 'passport-kakao'; // Kakao passport 임포트
 import User from './models/User.js'; // User db스키마 임포트
 import Product from './models/Product.js'; // Product db스키마 임포트
+import upload from './upload.js';
 // (나중에 Product, Chat 모델도 여기에 추가)
 
 //express 앱 설정
