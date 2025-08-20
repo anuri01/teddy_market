@@ -148,13 +148,18 @@ body {
 }
 
 /* 상품 등록 버튼 피그마에 맞게 재설정 필요*/ 
-/* .add-product-button {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: auto;
+.add-product-button {
+  width: fit-content;
+  min-width: 15rem;
   padding: 0.8rem 1.5rem;
-  border-radius: 50px;
-} */
+  border-radius: 8px;
+}
+
+.add-product-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
 
