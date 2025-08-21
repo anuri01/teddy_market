@@ -6,7 +6,8 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ProductEditor from './pages/ProductEditor';
-import ProductEditor1 from './pages/ProductEditors1';
+import ProductDetailPage from './pages/ProductDetailPage';
+// import ProductEditor1 from './pages/ProductEditors1';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import ProtectedRoute from './components/ProtectedRoute';
@@ -35,6 +36,7 @@ function App() {
           <Route path='/' element={<HomePage />}></Route>
           <Route path='/login' element={ isLoggedIn ? <Navigate to="/" /> : <LoginPage />}></Route>
           <Route path='/signup' element={ isLoggedIn ? <Navigate to="/" /> : <SignupPage />}></Route>
+          <Route path='/product/:productId' element={ <ProductDetailPage />}></Route>
           <Route path='/write' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
           <Route path='/write1' element={ <ProtectedRoute><ProductEditor1 /></ProtectedRoute>}></Route>
           {/* 👇 콜백 경로 추가 */}

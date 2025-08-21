@@ -282,6 +282,19 @@ app.post('/api/products', authMiddleware, upload.fields([
             }
 });
 
+// 상품상세 라우트
+app.get('/api/products/:id', async( req, res ) => {
+    try {     
+        const product = await Product.findById(req.params.id).populate(seller, username);
+        if(!product) {
+            return res.status(404).json({message: '상품을 찾을 수 없습니다.'});
+        }
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(500).json({message: "서버 오류가 발생했습니다.(상품상세"});
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
 });
