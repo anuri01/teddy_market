@@ -15,7 +15,7 @@ const s3 = new S3Client({
     region: process.env.AWS_REGION,
 });
 // 디버깅 로그
-console.log('s3 인스턴스 생성', s3);
+// console.log('s3 인스턴스 생성', s3);
 
 // --- 3. 업로드 기능(미들웨어) 생성 ---
 // multer 라이브러리를 사용해 'upload'라는 이름의 업로드 처리반을 만듭니다.
