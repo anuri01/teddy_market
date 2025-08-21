@@ -3,6 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
+import { TextStyle } from '@tiptap/extension-text-style';
+import FontSize from '@tiptap/extension-font-size'; // 👈 1. FontSize 라이브러리 import TextStyle 확장으로는 폰트크기 설정이 현재는 불가능해 전용 라이브러리 사용
+import { Color } from '@tiptap/extension-color';
+
 import './TiptapEditor.css'; // 에디터 전용 CSS 파일
 
 // --- 2. 메뉴바 컴포넌트
@@ -10,6 +14,7 @@ const MenuBar = ({editor}) => {
     if(!editor) {
         return null;
     }
+    const fontSizes = ['14px', '16px', '18px', '20px', '22px', '24px']; // 폰트사이즈 배열 저장
     // 추후에 에디터 기능 추가예정
     return <div className='menu-bar'>
         <button 
@@ -28,6 +33,24 @@ const MenuBar = ({editor}) => {
       >
         목록
       </button>
+      <select
+       onChange={e => e.target.value && editor.chain().focus().setFontSize(e.target.value).run()}
+        value={editor.getAttributes('textStyle').fontSize || ''}
+        className='font-size-select'
+        title="글자 크기"
+      >
+        <option value=" ">크기</option>
+        {fontSizes.map(size => (
+            <option key={size} value={size}>{size}</option>
+        ))}
+      </select>
+      <input 
+        type="color" // color로 지정할 경우 컬러피커 나옴. 
+        onInput={event => editor.chain().focus().setColor(event.target.value).run()}
+        value={editor.getAttributes('textStyle').color || '#000000'} // getAttributes를 사용해 textStyle의 color 속성을 넣는다.
+        className='color-input'
+        title="글자색상"
+      />
     </div>;
 };
 
@@ -44,6 +67,9 @@ function TiptapEditor({content, onChange}) {
     const editor = useEditor({
         extensions: [
             StarterKit, // 기본적인 편집 기능 세트
+            TextStyle,
+            Color,
+            FontSize,
             Placeholder.configure({ // 플레이스홀더 기능 설정
                 placeholder:'상품 설명을 입력하세요.',
             }),
