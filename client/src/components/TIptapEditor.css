@@ -1,0 +1,30 @@
+/* Tiptap 에디터 전체 컨테이너 */
+.tiptap-container {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+/* 메뉴바 스타일 */
+.menu-bar {
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Tiptap 에디터의 실제 입력 영역 스타일 */
+.tiptap-container .ProseMirror {
+  min-height: 150px;
+  padding: 1rem 0.5rem;
+  outline: none; /* 포커스 시 외곽선 제거 */
+  white-space: pre-wrap; /* 줄바꿈과 공백을 유지 */
+}
+
+/* Tiptap 에디터의 placeholder 스타일 가상요소를 만들어 플레이스홀더 처름 꾸미는 기법*/
+.ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    font-size: 0.875rem;
+    float: left;
+    color: #757575;
+    pointer-events: none;
+    height: 0;
+}

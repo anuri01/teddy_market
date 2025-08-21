@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
-// import TiptapEditor from '../components/TiptapEditor'; 작업전
+import TiptapEditor from '../components/TiptapEditor';
 import useUserStore from "../store/userStore";
 import useNumberInput from "../hooks/useNumberInput";
 import './ProductEditor.css';
@@ -127,13 +127,21 @@ function ProductEditor() {
                     {/* </div> */}
                     {/* <div className="form-group"> */}
                         {/* <label htmlFor="content">상세설명</label> */}
-                        <textarea className="form-textarea"
+                        {/* <textarea className="form-textarea"
                             id="content"
                             type="text"
                             placeholder="내용을 등록하세요"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
+                        /> */}
+                        {/* 👇 기존 textarea를 TiptapEditor 컴포넌트로 교체합니다. */}
+                        
+                        <TiptapEditor
+                            content={content}
+                            onChange={(newContent) => setContent(newContent)}
                         />
+                        
+                        
                          <input 
                          id="quantity"
                          type="number"

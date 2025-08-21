@@ -11,7 +11,9 @@ const MenuBar = ({editor}) => {
         return null;
     }
     // 추후에 에디터 기능 추가예정
-    return <div className='menu-bar'></div>;
+    return <div className='menu-bar'>
+        <span>나중에 에디터 메뉴가 들어갑니다.</span>
+    </div>;
 };
 
 // --- 2. 메인 에디터 컴포넌트
