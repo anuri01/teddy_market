@@ -7,8 +7,35 @@
 
 /* 메뉴바 스타일 */
 .menu-bar {
-    padding: 1rem 0.5rem;
+    display: flex;
+    flex-wrap: wrap; /* 버튼이 많아지면 다음 줄로 넘어가도록 */
+    gap: 0.5rem;
+    padding: 0.5rem;
     border-bottom: 1px solid #dee2e6;
+}
+
+.menu-bar button {
+    min-width: 3.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.25rem;
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+.menu-bar button:hover {
+ background-color: #f1f3f5;
+}
+
+.menu-bar .is-active{
+    font-weight: 600;
+    background-color: #959595;
+    color: white;
+
 }
 
 /* Tiptap 에디터의 실제 입력 영역 스타일 */

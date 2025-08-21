@@ -1,5 +1,5 @@
 // --- 1. 도구 가져오기 (import) ---
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -12,13 +12,32 @@ const MenuBar = ({editor}) => {
     }
     // 추후에 에디터 기능 추가예정
     return <div className='menu-bar'>
-        <span>나중에 에디터 메뉴가 들어갑니다.</span>
+        <button 
+            type="button"
+            onClick={ () => editor.chain().focus().toggleBold().run()}
+            className={ editor.isActive('bold') ? 'is-active' : '' } 
+        >
+            굵게
+        </button>
+        <button type="button" onClick={()=> editor.chain().focus().toggleItalic().run()} className={ editor.isActive('italic') ? 'is-active' : '' } >기울기</button>
+        <button type="button" onClick={ () => editor.chain().focus().toggleStrike().run()} className={ editor.isActive('strike') ? 'is-active' : '' } >취소선</button>
+        <button
+        type="button"
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
+        className={editor.isActive('bulletList') ? 'is-active' : ''}
+      >
+        목록
+      </button>
     </div>;
 };
 
 // --- 2. 메인 에디터 컴포넌트
 // 부모(상품등록페이지)로 부터 content(입력내용)와 onChange(함수)를 props로 전달 받는다. 
 function TiptapEditor({content, onChange}) {
+
+    // onUpdate와 onSelectionUpdate는 메뉴바의 is-active 상태를 실시간으로 동기화하기 위해 필요합니다.
+    const [_, setForceUpdate] = useState(0);
+
     // TiptapEditor useEdior의 훅을 사용해 인스턴스 생성. 생성시 extension객체에 배열로 각종 추가 기능을 설정한다. 
     // content, onUpdate 등 기본상태 함께 셋팅해 인스턴스 생성. 
     // 추가로 필요한 기능들은 이 훅을 통해서 추가한다. 
@@ -36,8 +55,18 @@ function TiptapEditor({content, onChange}) {
         // (질문에 대한 답) prop으로 받은 onChange 함수를 실행하여,
         // 변경된 HTML 내용을 부모 컴포넌트에 전달합니다.
         onChange(editor.getHTML());
+        setForceUpdate(prev => prev +1);
+        },
+        onSelectionUpdate: () => {
+            setForceUpdate(prev => prev + 1);
         },
     });
+
+    useEffect(() => {
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content);
+    }
+  }, [content, editor]);
 
     // 4. 화면그리기 
     // 메뉴바와 입력영력을 그림
