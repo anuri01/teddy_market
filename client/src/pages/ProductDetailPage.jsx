@@ -81,19 +81,18 @@ function ProductDetailPage() {
             {/* (첨부파일 UI는 나중에 추가) */}
             </div>
 
-            <div className="product-actions">
+            {/* <div className="product-actions"> */}
             { isAuthor ? (
-            <div className="prouct-actions">
+            <div className="product-actions">
                     <button type="submit" onClick={handleDelete} className="button button-secondary button-tertiary">상품삭제</button>
                     <Link to="/write/:productId" className="button button-primary">정보수정</Link>
             </div>
             ) : (
-                <div className="producr-actions">
+                <div className="product-actions">
                     <Link to="/" className="button button-primary">메인으로</Link>
                 </div>
             )
             }
-            </div>
     </div>
     )
     
