@@ -5,18 +5,22 @@
   align-items: center;
   padding: 0 1.5rem;
   height: 4rem;
-  /* border-bottom: 1px solid #e9ecef; */
+  border-bottom: 1px solid #e9ecef;
   background-color: white;
 }
 
+.header-left {
+  display: flex;
+  gap: 4.3rem;
+}
 .header-left .logo img {
   height: 2rem; /* 로고 이미지 높이 */
   display: block; /* 이미지 아래 불필요한 여백 제거 */
 }
 
 .header-left .page-title {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 600;
   color: #2C9EC1;
   margin: 0;
 }
@@ -24,7 +28,7 @@
 .navigation {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .navigation a, .navigation .nav-button {

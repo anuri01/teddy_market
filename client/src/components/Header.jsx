@@ -10,7 +10,7 @@ function Header() {
     const { isLoggedIn, logout } = useUserStore();
     const location = useLocation();
     const navigate = useNavigate();
-
+    
     const handleLogout = () => {
         logout();
         toast('로그아웃 되었습니다.');
@@ -22,6 +22,7 @@ function Header() {
         if ( pathname === '/login' ) return '로그인'
         if ( pathname === '/signup') return '회원가입'
         if ( pathname === '/write') return '상품등록'
+        if ( pathname.startsWith('/products')) return '상품정보'
         // 다른 경로도 같은 방식으로 추가할 수있음.
         return '';
     }
@@ -32,10 +33,15 @@ return (
             {/* 현재 경로가 메인('/')이면 로고를, 아니면 페이지 제목을 보여줍니다. */}
             { location.pathname === '/' ? (
                 <Link to="/" className="logo">
-                    <img src="images/logo.png" alt="TEDDY Market 로고" height={'30px'}></img>
+                    <img src="../public/images/logo.png" alt="TEDDY Market 로고" height={'30px'}></img>
                 </Link>
             ) : (
+                <>
+                <Link to="/" className="logo">
+                    <img src="../public/images/logo.png" alt="TEDDY Market 로고" height={'30px'}></img>
+                </Link>
                 <h1 className="page-title">{getPageTitle(location.pathname)}</h1>
+                </>
             )}
         </div>
         <nav className="navigation">
