@@ -23,6 +23,7 @@ function Header() {
         if ( pathname === '/signup') return '회원가입'
         if ( pathname === '/write') return '상품등록'
         if ( pathname.startsWith('/products')) return '상품정보'
+        if ( pathname.startsWith('/edit')) return '상품수정'
         // 다른 경로도 같은 방식으로 추가할 수있음.
         return '';
     }

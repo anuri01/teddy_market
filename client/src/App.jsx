@@ -37,8 +37,9 @@ function App() {
           <Route path='/login' element={ isLoggedIn ? <Navigate to="/" /> : <LoginPage />}></Route>
           <Route path='/signup' element={ isLoggedIn ? <Navigate to="/" /> : <SignupPage />}></Route>
           <Route path='/products/:productId' element={ <ProductDetailPage />}></Route>
-          <Route path='/write' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
           {/* 👇 콜백 경로 추가 */}
+          <Route path='/write' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
+          <Route path='/edit/:productId' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
           <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
         </Routes>

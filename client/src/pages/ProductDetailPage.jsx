@@ -85,11 +85,12 @@ function ProductDetailPage() {
             { isAuthor ? (
             <div className="product-actions">
                     <button type="submit" onClick={handleDelete} className="button button-secondary button-tertiary">상품삭제</button>
-                    <Link to="/write/:productId" className="button button-primary">정보수정</Link>
+                    <Link to="/edit/:productId" className="button button-primary">정보수정</Link>
             </div>
             ) : (
                 <div className="product-actions">
-                    <Link to="/" className="button button-primary">메인으로</Link>
+                    <Link to="/" className="button button-secondary">메인으로</Link>
+                    <Link to="/buy/:productId" className="button button-primary">상품구매</Link>
                 </div>
             )
             }
