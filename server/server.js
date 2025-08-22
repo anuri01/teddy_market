@@ -287,15 +287,23 @@ app.post('/api/products', authMiddleware, upload.fields([
 app.get('/api/products/:id', async( req, res ) => {
     try {     
         // populate는 db에서 데이터를 찾아올때 적용가능. (앞인자, 뒷인자) 앞인자는 데이터를 추가로 넣을 키 값, 뒷 값은 추가로 넣을 키 값 설정. 여기서는 seller에는 User모델의 id만 들어 있음. 키값은 문자열로 전달되어야 함. 
-        console.log('상품정보 요청', req.params.id)
         const product = await Product.findById(req.params.id).populate('seller', 'username');
-        console.log('상품정보 생성')
         if(!product) {
             return res.status(404).json({message: '상품을 찾을 수 없습니다.'});
         }
         res.status(200).json(product);
     } catch (error) {
         res.status(500).json({message: "서버 오류가 발생했습니다.(상품상세)"});
+    }
+});
+
+app.get('/api/products', async( req, res ) => {
+    try {
+        // find({})는 db의 모든 정보를 가져오는 메소드. 전체 목록을 가져올때는 sort 메소드를 사용해 
+        const products = await Product.find({}).sort({createdAt: -1}).populate('seller', 'username');
+        res.status(200).json(products)
+    } catch(error) {
+        res.status(500).json({message: '서버 오류가 발생했습니다.(상품전체목록)'})
     }
 });
 
