@@ -141,11 +141,11 @@ body {
   margin: 0 0 0.5rem 0;
 }
 
-.product-info p {
+/* .product-info p {
   font-size: 0.9rem;
   color: #868e96;
   margin: 0;
-}
+} */
 
 /* 상품 등록 버튼 피그마에 맞게 재설정 필요*/ 
 .add-product-button {

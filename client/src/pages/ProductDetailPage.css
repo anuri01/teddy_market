@@ -1,0 +1,85 @@
+.product-detail-page {
+  width: 100%;
+  padding-bottom: 6rem; /* 하단 고정 버튼을 위한 공간 확보 */
+}
+
+/* --- 상품 이미지 --- */
+.detail-product-image {
+  /* width: calc(100% + 3rem); 양쪽 여백(1.5rem * 2)을 꽉 채우도록 너비 확장 */
+  /* margin: -1.5rem -1.5rem 0 -1.5rem; 위쪽과 양쪽 여백을 없애 화면 상단에 붙임 */
+  width: calc(100% + 3rem);
+  margin: 0rem -1.5rem 0 -1.5rem;
+  height: 200px;
+  object-fit: contain;
+  background-color: #f8f9fa; /* 이미지가 없을 때를 위한 배경색 */
+}
+
+/* --- 판매자 정보 --- */
+.seller-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem; /* 프로필 이미지와 이름 사이 간격 */
+  padding: 0.5rem 0 1rem 0;
+  color: #757575;
+  /* border-bottom: 1px solid #e9ecef; */
+}
+
+/* --- 상품 정보 --- */
+.product-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem; /* 프로필 이미지와 이름 사이 간격 */
+  padding: 1rem 0;
+  /* border-bottom: 1px solid #e9ecef; */
+}
+
+.seller-name {
+  font-weight: 600;
+}
+
+/* --- 상품 기본 정보 --- */
+.product-main-info {
+  padding: 1rem 0.5rem 0 0;
+}
+
+.product-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.price {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* --- 상품 상세 설명 --- */
+.product-description {
+  min-height: 150px;
+  padding: 1.5rem 0.5rem;
+  line-height: 1.7;
+  color: #343a40;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+/* --- 하단 CTA 버튼 --- */
+.product-actions {
+  position: fixed; /* 화면 하단에 고정 */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  
+  /* .app-container의 max-width와 margin을 고려하여 중앙 정렬 */
+  max-width: 420px;
+  margin: 0 auto;
+  
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background-color: white;
+  border-top: 1px solid #e9ecef;
+}

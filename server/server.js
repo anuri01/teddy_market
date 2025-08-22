@@ -251,10 +251,10 @@ app.post('/api/products', authMiddleware, upload.fields([
                 const { title, content, price, saleprice, quantity } = req.body;
                 // (질문에 대한 답) 대표 이미지는 req.files.mainImage 배열의 첫 번째 요소입니다.
                 // 디버깅 로그
-                console.log('요청 전달', req.body);
+                // console.log('요청 전달', req.body);
                 const mainImage = req.files.mainImage ? req.files.mainImage[0] : null;
                 // 디버깅 로그
-                console.log('이미지파일 전달', mainImage);
+                // console.log('이미지파일 전달', mainImage);
                 if (!title || !content || !price || !mainImage) {
                     return res.status(400).json({message: '제목, 내용, 가격, 상품이미지는 필수 항목입니다.'});
                 }
@@ -282,16 +282,20 @@ app.post('/api/products', authMiddleware, upload.fields([
             }
 });
 
-// 상품상세 라우트
+// 상품상세 라우트 :id의 : 는 뒤에 변수를 사용하겠다는 선언
+// 클라이언트에서 전달받은 id를 가지고 Product 모델에서 해당 데이터를 찾아 인스턴스를 생성하고 해당 객체를 응답해주는 라우트
 app.get('/api/products/:id', async( req, res ) => {
     try {     
-        const product = await Product.findById(req.params.id).populate(seller, username);
+        // populate는 db에서 데이터를 찾아올때 적용가능. (앞인자, 뒷인자) 앞인자는 데이터를 추가로 넣을 키 값, 뒷 값은 추가로 넣을 키 값 설정. 여기서는 seller에는 User모델의 id만 들어 있음. 키값은 문자열로 전달되어야 함. 
+        console.log('상품정보 요청', req.params.id)
+        const product = await Product.findById(req.params.id).populate('seller', 'username');
+        console.log('상품정보 생성')
         if(!product) {
             return res.status(404).json({message: '상품을 찾을 수 없습니다.'});
         }
         res.status(200).json(product);
     } catch (error) {
-        res.status(500).json({message: "서버 오류가 발생했습니다.(상품상세"});
+        res.status(500).json({message: "서버 오류가 발생했습니다.(상품상세)"});
     }
 });
 
