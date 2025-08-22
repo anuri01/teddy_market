@@ -11,7 +11,7 @@ function Footer() {
         </div>
         <div className='footer-text'>
           <span>Copyright</span>
-          <p>TEDDT Corp.</p>
+          <p>TEDDY Corp.</p>
           <span>All Rights Reserved.</span>
         </div>
       </footer>
