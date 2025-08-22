@@ -8,8 +8,8 @@
   /* width: calc(100% + 3rem); 양쪽 여백(1.5rem * 2)을 꽉 채우도록 너비 확장 */
   /* margin: -1.5rem -1.5rem 0 -1.5rem; 위쪽과 양쪽 여백을 없애 화면 상단에 붙임 */
   width: calc(100% + 3rem);
-  margin: 0rem -1.5rem 0 -1.5rem;
-  height: 200px;
+  margin: -1.5rem -1.5rem 0 -1.5rem;
+  height: 250px;
   object-fit: contain;
   background-color: #f8f9fa; /* 이미지가 없을 때를 위한 배경색 */
 }
