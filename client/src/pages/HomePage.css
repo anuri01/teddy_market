@@ -14,3 +14,110 @@
     object-fit: contain;
     
 }
+
+.banner-placeholder {
+  width: 100%;
+  height: 200px;
+  background-color: #e9ecef;
+}
+
+.product-list-section {
+  margin-bottom: 2rem;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.section-header h2{
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color:#4d4d4d;
+}
+.see-more-link {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color:#4d4d4d;
+    text-decoration: none;
+}
+.see-more-link:hover{
+    color:#52a8f3
+}
+
+.product-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2d열 그리드 */
+  gap: 1rem; /* 카드 사이 간격 */ 
+  /* margin-bottom: 2rem; */
+}
+
+.product-card{
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden; /* 이미지가 모서리를 벗어나지 않도록 */
+  transition: box-shadow 0.2s;
+}
+
+.product-card:hover{
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}
+.product-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover; /* 이미지 비율 유지 */
+  background-color: #f8f9fa;
+}
+
+.product-list-info {
+    display: flex;
+    padding-left: 0.5rem;
+    
+    flex-direction: column;
+    align-items:flex-start;
+    gap: 0.3rem;
+    /* float: left; */
+}
+
+.product-list-info h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0 0;
+  white-space: nowrap; /* 줄바꿈 안함 */
+  overflow: hidden; /* 넘치는 내용 보이지 않음 */
+  text-overflow: ellipsis; /* 말줄임 표시 속성 */
+}
+
+.product-list-info p {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color:#4d4d4d;
+  margin: 0 0 1rem 0;
+}
+
+
+.buy-action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.4rem;
+  padding: 0 0.5rem;
+  margin: 0 1rem 1rem 1rem;
+  border-radius: 8px;
+  /* border: 1px solid transparent; */
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.buy-action-button:hover {
+background-color:#52a8f3;
+}

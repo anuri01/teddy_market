@@ -30,6 +30,7 @@ function HomePage() {
               <div banner="banner-indicators">
                 <p>&#9675; &#9675; &#9679; &#9675;</p>
               </div>
+              {/* <div className="banner-placeholder"></div> */}
             </section>
             <section className="product-list-section">
               <div className="section-header">
@@ -39,13 +40,18 @@ function HomePage() {
               <div className="product-list">
                 {productList.map( product => (
                   <div className="product-card" key={product._id}>
-                    <Link to={`/product/${product._id}`}>
+                    <Link to={`/products/${product._id}`}>
                     <img src={product.mainImageUrl} alt={product.title} className="product-image"></img>
-                    <div className="product-info">
+                    <div className="product-list-info">
                     <h3>{product.title}</h3>
-                    <p>{product.price.toLocaleString()}원</p>
+                    <p>판매가격: {product.price.toLocaleString()}원</p>
                     </div>
                     </Link>
+                    <div className="buy-action-button button-primary">
+                    <Link to={`/buy/:${product._id}`}>
+                    <p>구매하기</p>
+                    </Link>
+                    </div>
                   </div>))}
               </div>
             </section>

@@ -109,37 +109,7 @@ body {
   border-color: #fee500;
 }
 
-.product-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* 2d열 그리드 */
-  gap: 1rem; /* 카드 사이 간격 */ 
-}
 
-.product-card{
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  overflow: hidden; /* 이미지가 모서리를 벗어나지 않도록 */
-}
-
-.product-card a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.product-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover; /* 이미지 비율 유지 */
-}
-
-.product-info {
-  padding: 1rem;
-}
-
-.product-info h3 {
-  font-size: 1rem;
-  margin: 0 0 0.5rem 0;
-}
 
 /* .product-info p {
   font-size: 0.9rem;
@@ -157,6 +127,7 @@ body {
 
 .add-product-button-container {
   display: flex;
+  margin-top: 5rem;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
