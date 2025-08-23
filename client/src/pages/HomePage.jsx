@@ -26,7 +26,7 @@ function HomePage() {
     return (
         <div className="homepage-container">
             <section className="main-banner">
-              <img className="banner-image" src='../public/images/banner_20250822.png' alt="메인배너"></img>
+              <img className="banner-image" src='/images/banner_20250822.png' alt="메인배너"></img>
               <div banner="banner-indicators">
                 <p>&#9675; &#9675; &#9679; &#9675;</p>
               </div>
@@ -41,14 +41,14 @@ function HomePage() {
                 {productList.map( product => (
                   <div className="product-card" key={product._id}>
                     <Link to={`/products/${product._id}`}>
-                    <img src={product.mainImageUrl} alt={product.title} className="product-image"></img>
+                    <img src={product.mainImageUrl} alt={product.title} className="product-image" crossOrigin="anonymous"></img>
                     <div className="product-list-info">
                     <h3>{product.title}</h3>
                     <p>판매가격: {product.price.toLocaleString()}원</p>
                     </div>
                     </Link>
                     <div className="buy-action-button button-primary">
-                    <Link to={`/buy/:${product._id}`}>
+                    <Link to={`/buy/${product._id}`}>
                     <p>구매하기</p>
                     </Link>
                     </div>

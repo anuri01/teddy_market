@@ -29,7 +29,7 @@ const upload = multer({
             // file.fieldname은 multer가 알려주는 파일의 '이름표'('mainImage' 또는 'attachments')입니다.
             // 이름표에 따라 파일을 다른 폴더에 저장합니다.
             // 1. 원본 파일 이름을 UTF-8 NFC 형식으로 정규화(normalize)합니다.
-            const folder = file.fieldname === 'mainImage' ? 'products/' : 'attachments/'
+            const folder = file.fieldname === 'mainImage' ? 'products' : 'attachments'
             const decodedName = Buffer.from(file.originalname, 'latin1').toString('utf8');
             cb(null, `${folder}/${Date.now()}_${path.basename(decodedName)}`);
         },

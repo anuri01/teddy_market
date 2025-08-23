@@ -21,12 +21,41 @@ function ProductEditor() {
     const [ mainImageFile, setMainImageFile ] = useState(null) // 대표이미지 파일 객체
     const [ attachmentFiles, setAttachmentFilles ] = useState([]); // 첨부 파일 목록
 
+     // --- 수정 모드를 위한 추가 상태 ---
+    const [existingMainImageUrl, setExistingMainImageUrl] = useState('');
+    const [existingAttachments, setExistingAttachments] = useState([]);
+    const [deletedAttachments, setDeletedAttachments] = useState([]);
+
     const navigate = useNavigate();
     const { productId } = useParams(); // useParams 훅으로 url 파라미터에서 상품id를 찾아서 저장
     const isEditMode = Boolean(productId); // 수정모드 판단
     // 수정모드를 위한 useEffect는 추후 추가
 
     //함수 기능정의 - 이미지 파일명 노출, 첨부 파일명 노출, 상품등록 
+    // 수정 모드일 경우, 원본 상품 데이터를 불러오는 useEffect
+    useEffect(() => {
+        if(isEditMode) {
+            const fetchProductData = async () => {
+                try {
+                const response = await api.get(`/products/${productId}`);
+                const product = response.data;
+                setTitle(product.title);
+                setContent(product.content);
+                setPrice(product.price.toString());
+                setQuantity(product.quantity.toString());
+                setSalePrice(product.salePrice ? product.salePrice.toString() : '');
+                setExistingMainImageUrl(product.mainImageUrl);
+                setExistingAttachments(product.files || []);
+
+            } catch (error) {
+                toast.error('상품정보를 불러올수 없습니다.');
+                navigate('/');
+            }
+            };
+            fetchProductData();
+        }
+    },[productId, isEditMode, navigate]);
+    
     // 업로드 이미지 파일명 노출
     const handleMainImageChange = (e) => {
         if (e.target.files.length > 0) {
@@ -61,6 +90,14 @@ function ProductEditor() {
     const handleRemoveAttachment = (indexToRemove) => { // 파일 인덱스를 받아 해당 파일 인데스를 제외하고 다시 배열 구서 
         setAttachmentFilles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
     };
+
+    // '기존' 첨부 파일을 목록에서 삭제하는 함수
+  const handleRemoveExistingAttachment = (fileToRemove) => {
+    // 1. 화면에 보이는 목록에서 제거
+    setExistingAttachments(prevFiles => prevFiles.filter((file) => file.url !== fileToRemove.url));
+    // 2. '삭제 대기 명단'에 추가
+    setDeletedAttachments(prevDeleted => [...prevDeleted, fileToRemove]);
+  };
     
     // '작성 완료' 버튼 눌렀을 때 실행될 함수 
     const handleSubmit = async (e) => {
@@ -70,7 +107,7 @@ function ProductEditor() {
     // 배열의 경우 forEach로 배열을 순회하면서 데이터 추가 
     const formData = new FormData();
 
-    if(!title, !content, !mainImageFile) {
+    if(!title || !content || (!mainImageFile && (!isEditMode || !existingMainImageUrl))) {
         toast.error('제목, 내용, 상품이미지는 필수 입니다.');
         return;
     }
@@ -89,14 +126,26 @@ function ProductEditor() {
         })
     };
 
+    if (isEditMode) {
+        formData.append('existingAttachments', JSON.stringify(existingAttachments));
+        formData.append('deletedAttachments', JSON.stringify(deletedAttachments));
+    }
+
     try {
+        let response; // 모드에 따라 내용이 바뀌므로 let으로 선언
         if (isEditMode) {
-            // 수정 로직 (차후 구현)
+            response =await api.put(`/products/${productId}`, formData);
+            toast.success('상품이 수정되었습니다!');
+            
         } else {
-            await api.post('/products', formData);
+            response = await api.post('/products', formData);
+            toast.success('상품이 등록되었습니다!');
         }
-         toast.success('상품이 등록되었습니다!');
-         navigate('/');
+          console.log('서버 응답 전체:', response);
+    console.log('응답 데이터:', response.data);
+    console.log('_id 값:', response.data._id);
+    console.log('id 값:', response.data.id);
+        navigate(`/products/${response.data._id}`);
 
     } catch (error) {
         toast.error('상품 등록에 실패했어요.');
@@ -160,9 +209,17 @@ function ProductEditor() {
                             value={displayPrice}
                             onChange={handlePriceChange}
                         />
+                        {/* 기존 이미지가 있으면 보여주고, 없으면 파일명 표시 */}
+                        {isEditMode && existingMainImageUrl && !mainImageFile && (
+                        <img src={existingMainImageUrl} alt="기존 대표 이미지" className="image-preview" />
+                        )}
                         <div className="file-upload-group">
                             {/* (질문에 대한 답) mainImageFile이 있으면 그 name 속성을, 없으면 플레이스홀더를 보여줍니다. */}
-                            <p className="file-name-display">{mainImageFile ? mainImageFile.name : '상품이미지를 선택하세요.'}</p>
+                            { !isEditMode ? (
+                            <p className="file-name-display">{mainImageFile ? mainImageFile.name : '상품이미지를 선택하세요.'}</p> 
+                            ) : (
+                                <p className="file-name-display">{mainImageFile ? mainImageFile.name : '변경할 상품이미지를 선택하세요.'}</p> 
+                            )}
                             <label htmlFor="mainImage" className="action-button button-primary file-label-button">이미지 등록</label>
                             <input id="mainImage" 
                             className="file-input"
@@ -200,7 +257,14 @@ function ProductEditor() {
                 </div>
                     {/* (첨부파일 목록 UI는 나중에 추가) */}
                     <div className="file-preview-list">
-                        { attachmentFiles.length > 0  ? 
+                        {/* 기존 첨부 파일 목록 */}
+                        {existingAttachments.map((file) => (
+                        <div key={file.url} className="file-preview-item">
+                            <span className="file-preview-name">{file.name}</span>
+                            <button type="button" onClick={() => handleRemoveExistingAttachment(file)} className="file-remove-button">&times;</button>
+                        </div>
+                        ))}
+                        { attachmentFiles.length > 0 || existingAttachments.length > 0  ? 
                             attachmentFiles.map((file, index) => <div key={index} className="file-preview-item">
                                 <span className="file-preview-name">{file.name}</span>
                                  <button type="button" onClick={() => handleRemoveAttachment(index)} className="file-remove-button">&times;</button>
@@ -209,7 +273,7 @@ function ProductEditor() {
             </section>
                         <div className="form-actions">
                           <button type="button" className="button button-secondary button-tertiary">취소</button>
-                          <button type="submit" className="button button-primary">작성 완료</button>
+                          <button type="submit" className="button button-primary">{ isEditMode ? '수정 완료' : '작성 완료' }</button>
                         </div>
                     {/* </div> */}
 
