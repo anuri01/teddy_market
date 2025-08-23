@@ -282,6 +282,55 @@ app.post('/api/products', authMiddleware, upload.fields([
             }
 });
 
+app.put('/api/products/:id', authMiddleware, upload.fields([{naem: mainImage, maxCount:1}, { name: attachments, maxCount: 5}]), async ( req, res) => {
+    try {
+        const { title, content, price, salePrice, quantity, existingFiles, deletedFiles } = req.body;
+        const productId = req.params.id;
+
+        //(s3 파일 삭제 로직은 추후 작업)
+
+        // 기존 파일과 신규 업로드 파일을 합쳐 저장할 파일리스트 만듬. 기존 파일 목록은 json 문자열로 전달되므로 JSON.parase를 사용해 자바스크립트 객체로 변환
+        const keptFiles = JSON.parse(existingFiles || []);
+        const newUploadFiles = req.files.attachments ? req.files.attachments.map( file => ({
+            url: file.location,
+            name: Buffer.from(file.originalname, 'latin1').toString('utf-8'),
+            type: file.mimetype,
+        })) : [];
+        const finalFiles = [...keptFiles, ...newUploadFiles];
+
+        // 업데이트 상품 객체 생성
+        const updateData = {
+            title,
+            content,
+            price,
+            salePrice,
+            quantity,
+            files: finalFiles,
+        };
+        
+        // 상품이미지를 다시 올렸을 경우 확인해 업데이트 
+        const newMainImage = req.files.mainImage ? req.files.mainImage[0] : null;
+        if(newMainImage) {
+            updateData.mainImage = newMainImage;
+        }
+
+        // 
+        const updateProduct = await Product.findByIdAndUpdate(
+            {_id: productId, seller: req.user.id}, // 업데이트 조건: ID일지, 작성자 일치
+            updateData, // 업데이트 할 내용(객체)
+            { new: true } // 옵션: 업데이트된 문서를 반환(updateProduct로 반환됨)
+        );
+
+        if (!updateData) {
+            return res.json(404).json({messge:'상품이 없거나 판매자가 아닙니다.'});
+        }
+
+        res.status(201).json({message: '수정이 완료됬습니다.'});
+    } catch (error) {
+        console.error('상품 수정 중 에러 발생,')
+        res.status(500).json({message: '서버 오류가 발생했습니다. 정보수정'});
+    }
+})
 // 상품상세 라우트 :id의 : 는 뒤에 변수를 사용하겠다는 선언
 // 클라이언트에서 전달받은 id를 가지고 Product 모델에서 해당 데이터를 찾아 인스턴스를 생성하고 해당 객체를 응답해주는 라우트
 app.get('/api/products/:id', async( req, res ) => {
