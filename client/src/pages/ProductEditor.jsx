@@ -19,7 +19,7 @@ function ProductEditor() {
     
     // const [ mainImageUrl, setMainImageUrl ] = useState(''); 프론트에서는 서버에 필요한 정보를 담아 요청만 보내고 저장과 저장후 url 서버에서 처리하기 때문에 해당 상태는 필요가 없음. 
     const [ mainImageFile, setMainImageFile ] = useState(null) // 대표이미지 파일 객체
-    const [ attachmentFiles, setAttachmentFilles ] = useState([]); // 첨부 파일 목록
+    const [ attachmentFiles, setAttachmentFiles ] = useState([]); // 첨부 파일 목록
 
      // --- 수정 모드를 위한 추가 상태 ---
     const [existingMainImageUrl, setExistingMainImageUrl] = useState('');
@@ -81,14 +81,14 @@ function ProductEditor() {
             toast.error('첨부파일은 5개까지만 가능합니다.');
             return;
         }
-        setAttachmentFilles(prevFiles => [...prevFiles, ...newFiles]);
+        setAttachmentFiles(prevFiles => [...prevFiles, ...newFiles]);
 
     };
 
     
     // 첨부파일 삭제시 실행될 함수 x 버튼을 눌렀을떄 실행
     const handleRemoveAttachment = (indexToRemove) => { // 파일 인덱스를 받아 해당 파일 인데스를 제외하고 다시 배열 구서 
-        setAttachmentFilles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+        setAttachmentFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
     };
 
     // '기존' 첨부 파일을 목록에서 삭제하는 함수
@@ -141,10 +141,6 @@ function ProductEditor() {
             response = await api.post('/products', formData);
             toast.success('상품이 등록되었습니다!');
         }
-          console.log('서버 응답 전체:', response);
-    console.log('응답 데이터:', response.data);
-    console.log('_id 값:', response.data._id);
-    console.log('id 값:', response.data.id);
         navigate(`/products/${response.data._id}`);
 
     } catch (error) {
@@ -190,7 +186,8 @@ function ProductEditor() {
                             onChange={(newContent) => setContent(newContent)}
                         />
                         
-                        
+                        <div className="form-group">
+                        <label htmlFor="quantity" className="input-lable">상품수량</label>
                          <input 
                          id="quantity"
                          type="number"
@@ -200,6 +197,9 @@ function ProductEditor() {
                          value={quantity}
                          onChange={(e) => setQuantity(e.target.value < 0 ? 0 : e.target.value)} 
                          />
+                         </div>
+                        <div className="form-group">
+                        <label htmlFor="price" className="input-lable">상품가격</label>
                         <input 
                             // min="0"
                             id="price"
@@ -209,10 +209,12 @@ function ProductEditor() {
                             value={displayPrice}
                             onChange={handlePriceChange}
                         />
+                        </div>
                         {/* 기존 이미지가 있으면 보여주고, 없으면 파일명 표시 */}
                         {isEditMode && existingMainImageUrl && !mainImageFile && (
                         <img src={existingMainImageUrl} alt="기존 대표 이미지" className="image-preview" />
                         )}
+                        <p className="input-lable">대표 이미지</p>
                         <div className="file-upload-group">
                             {/* (질문에 대한 답) mainImageFile이 있으면 그 name 속성을, 없으면 플레이스홀더를 보여줍니다. */}
                             { !isEditMode ? (
@@ -232,6 +234,8 @@ function ProductEditor() {
             </section>
             <section className="form-section">
                 <h3>부가 정보</h3>
+                    <div className="form-group">
+                    <label htmlFor="salePrice" className="input-lable">할인가격</label>
                     <input 
                     // min="0"
                     id="salePrice"
@@ -241,6 +245,7 @@ function ProductEditor() {
                     value={displaySalePrice}
                     onChange={handleSalePriceChange}
                      />
+                     </div>
             </section>
             <section className="form-section">
                 <h3>파일 첨부</h3>
