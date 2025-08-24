@@ -15,6 +15,7 @@ import User from './models/User.js'; // User db스키마 임포트
 import Product from './models/Product.js'; // Product db스키마 임포트
 import upload from './upload.js';
 import { memoryStorage } from 'multer';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 // (나중에 Product, Chat 모델도 여기에 추가)
 
 //express 앱 설정
@@ -285,11 +286,23 @@ app.post('/api/products', authMiddleware, upload.fields([
 
 app.put('/api/products/:id', authMiddleware, upload.fields([{name: 'mainImage', maxCount:1}, { name: 'attachments', maxCount: 5}]), async ( req, res) => {
     try {
-        const { title, content, price, salePrice, quantity, existingAttachments, deletedFiles, mainImageUrl } = req.body;
+        const { title, content, price, salePrice, quantity, existingAttachments, deletedAttachments, mainImageUrl } = req.body;
         const productId = req.params.id;
         
         //(s3 파일 삭제 로직은 추후 작업)
-
+        const filesToDelete = JSON.parse(deletedAttachments || '[]');
+        if (filesToDelete.length > 0) {
+            //Promise.all을 사용해 한번에 삭제처리
+            await Promise.all(filesToDelete.map(file => {
+                // 삭제시 필요한 파일 키 추출.
+                const fileKey = decodeURIComponent(new URL(file.url).pathname.substring(1));
+                const command = new DeleteObjectCommand({
+                    Bucket: process.env.S3_BUCKET_NAME,
+                    Key: fileKey,
+                });
+                return S3.send(command);
+            }));
+        }
         // 기존 파일과 신규 업로드 파일을 합쳐 저장할 파일리스트 만듬. 기존 파일 목록은 json 문자열로 전달되므로 JSON.parase를 사용해 자바스크립트 객체로 변환
         const keptFiles = JSON.parse(existingAttachments || '[]');
         const newUploadFiles = req.files.attachments ? req.files.attachments.map( file => ({
