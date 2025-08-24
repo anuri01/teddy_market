@@ -6,8 +6,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { TextStyle } from '@tiptap/extension-text-style';
 import FontSize from '@tiptap/extension-font-size'; // 👈 1. FontSize 라이브러리 import TextStyle 확장으로는 폰트크기 설정이 현재는 불가능해 전용 라이브러리 사용
 import { Color } from '@tiptap/extension-color';
-
-import './TiptapEditor.css'; // 에디터 전용 CSS 파일
+import './TIptapEditor.css'; // 에디터 전용 CSS 파일
 
 // --- 2. 메뉴바 컴포넌트
 const MenuBar = ({editor}) => {
