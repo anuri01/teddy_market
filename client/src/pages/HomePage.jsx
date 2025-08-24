@@ -31,8 +31,7 @@ function HomePage() {
       const fetchProducts = async () => {
       try {
       const response = await api.get('/products');
-      setProductList(response.data);
-      setImageLoadErrors(new Set()); // 👈 상품 목록 새로 로드 시 에러 상태 초기화
+      return setProductList(response.data);
     } catch(error) {
       console.error('상품 목록을 가져올 수 없습니다.', error);
     }
@@ -67,12 +66,7 @@ function HomePage() {
                     src={product.mainImageUrl}
                     alt={product.title} 
                     className="product-image"
-                    crossOrigin="anonymous">
-                    onError={() => handleImageError(product._id, product.mainImageUrl)}
-                    onLoad={() => handleImageLoad(product._id)}
-                    key={`${product._id}-${product.mainImageUrl}`} // 👈 강제 리로드용 key
-                    </img>
-
+                    crossOrigin="anonymous"></img>
                     <div className="product-list-info">
                     <h3>{product.title}</h3>
                     <p>판매가격: {product.price.toLocaleString()}원</p>
