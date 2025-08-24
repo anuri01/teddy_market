@@ -277,7 +277,7 @@ function ProductEditor() {
                     </div>
             </section>
                         <div className="form-actions">
-                          <Link to={`/products/${productId}`} className="button button-secondary">
+                          <Link to={isEditMode ? `/products/${productId}` : `/`} className="button button-secondary">
                           취소
                           {/* <button type="button" className="button button-secondary button-tertiary">취소</button> */}
                           </Link>
