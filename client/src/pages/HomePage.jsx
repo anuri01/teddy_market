@@ -49,9 +49,12 @@ function HomePage() {
                     <Link to={`/products/${product._id}`}>
                     <img 
                     src={product.mainImageUrl}
+                    // src={`${product.mainImageUrl}?t=${Date.now()}`} // 👈 캐시 우회
                     alt={product.title} 
                     className="product-image"
-                    crossOrigin="anonymous"></img>
+                    // crossOrigin="anonymous"
+                    >
+                    </img>
                     <div className="product-list-info">
                     <h3>{product.title}</h3>
                     <p>판매가격: {product.price.toLocaleString()}원</p>
