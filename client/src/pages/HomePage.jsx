@@ -3,6 +3,7 @@ import { Link, Navigate} from 'react-router-dom';
 import useUserStore from "../store/userStore";
 import api from "../api/axiosConfig";
 import './HomePage.css';
+import toast from "react-hot-toast";
 
 function HomePage() {
   const [ productList, setProductList ] = useState([]); // 상품목록 기억 상자
@@ -21,6 +22,10 @@ function HomePage() {
   };
     fetchProducts();
   }, []);
+
+  const handleBuy = () => {
+    toast('상품구매 기능은 추후 지원됩니다.');
+  }
 
   // --- 화면 그리기 ---
     return (
@@ -47,11 +52,12 @@ function HomePage() {
                     <p>판매가격: {product.price.toLocaleString()}원</p>
                     </div>
                     </Link>
+                    <button type="submit" onClick={handleBuy} className="buy-action-button button-primary">구매하기</button>
+                    {/* <Link to={`/buy/${product._id}`}>
                     <div className="buy-action-button button-primary">
-                    <Link to={`/buy/${product._id}`}>
-                    <p>구매하기</p>
-                    </Link>
-                    </div>
+                    구매하기
+                    </div> 
+                    </Link> */}
                   </div>))}
               </div>
             </section>

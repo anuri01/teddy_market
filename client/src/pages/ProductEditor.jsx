@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
 import TiptapEditor from '../components/TiptapEditor';
@@ -12,7 +12,7 @@ function ProductEditor() {
     const [ content, setContent ] = useState('');
     const [ price, displayPrice, handlePriceChange, setPrice ] = useNumberInput();
     const [ salePrice, displaySalePrice, handleSalePriceChange, setSalePrice ] = useNumberInput();
-    const [ quantity, displayQuantity, handleQuantityChange, setQuantity ] = useNumberInput();
+    const [ quantity, setQuantity ] = useState(1);
     // 표시되는 값에 ,를 넣기 위해 커스텀 훅으로 변경. 
     // const [ salePrice, setSalePrice] = useState(); 
     // const [ quantity, setQuantity ] = useState();
@@ -54,7 +54,7 @@ function ProductEditor() {
             };
             fetchProductData();
         }
-    },[productId, isEditMode, navigate]);
+    },[productId, isEditMode, navigate, setPrice, setSalePrice]);
     
     // 업로드 이미지 파일명 노출
     const handleMainImageChange = (e) => {
@@ -77,7 +77,7 @@ function ProductEditor() {
     // 첨부 파일 선택 시 실행될 함수 (e) 이벤트 객체를 받아.. files의 내용을 배열로 받아 입력. 
     const handleAttachmentChange = (e) => { // 파일첨부 후 실행(파일 선택 창에서 파일 선택 후 닫을때 실행)
         const newFiles = Array.from(e.target.files); // Filelist객체로 오므로 배열로 변환
-        if (attachmentFiles.length + newFiles.length > 5) {
+        if (attachmentFiles.length + newFiles.length + existingAttachments.length > 5) {
             toast.error('첨부파일은 5개까지만 가능합니다.');
             return;
         }
@@ -277,7 +277,10 @@ function ProductEditor() {
                     </div>
             </section>
                         <div className="form-actions">
-                          <button type="button" className="button button-secondary button-tertiary">취소</button>
+                          <Link to={`/products/${productId}`} className="button button-secondary">
+                          취소
+                          {/* <button type="button" className="button button-secondary button-tertiary">취소</button> */}
+                          </Link>
                           <button type="submit" className="button button-primary">{ isEditMode ? '수정 완료' : '작성 완료' }</button>
                         </div>
                     {/* </div> */}
