@@ -9,6 +9,7 @@ import ProductEditor from './pages/ProductEditor';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ProductListPage from './pages/ProductListPage';
 import BuyPage from './pages/BuyPage';
+import ProfilePage from './pages/ProfilePage';
 // import ProductEditor1 from './pages/ProductEditors1';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
@@ -44,6 +45,7 @@ function App() {
           <Route path='/edit/:productId' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
           <Route path='/buy/:productId' element={<BuyPage />}></Route>
           <Route path='/productlist' element={<ProductListPage />}></Route>
+          <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
           <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
         </Routes>
