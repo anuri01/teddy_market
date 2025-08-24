@@ -40,4 +40,5 @@ const upload = multer({
 
 // --- 4. 완성된 기능 내보내기 ---
 // 이렇게 만들어진 'upload' 처리반을 다른 파일에서 import하여 사용할 수 있도록 내보냅니다.
+export { s3 };
 export default upload;
