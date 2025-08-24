@@ -40,7 +40,7 @@ function HomePage() {
             <section className="product-list-section">
               <div className="section-header">
                 <h2>판매상품</h2>
-                <Link to="products" className="see-more-link">더보기 &gt;</Link>
+                <Link to="productlist" className="see-more-link">더보기 &gt;</Link>
               </div>
               <div className="product-list">
                 {productList.map( product => (
