@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, Navigate} from 'react-router-dom';
 import useUserStore from "../store/userStore";
 import api from "../api/axiosConfig";
-const [imageLoadErrors, setImageLoadErrors] = useState(new Set()); // 👈 이미지 에러 상태 추가
 import './HomePage.css';
 import toast from "react-hot-toast";
 
@@ -10,20 +9,6 @@ function HomePage() {
   const [ productList, setProductList ] = useState([]); // 상품목록 기억 상자
   const { isLoggedIn } = useUserStore(); // 로그인상태 확인을 위한 전여스토어 내 상태 호출
 
-    // 이미지 로드 에러 핸들러
-  const handleImageError = (productId, imageUrl) => {
-    console.warn('이미지 로드 실패:', imageUrl);
-    setImageLoadErrors(prev => new Set(prev).add(productId));
-  };
-
-  // 이미지 로드 성공 핸들러
-  const handleImageLoad = (productId) => {
-    setImageLoadErrors(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(productId);
-      return newSet;
-    });
-  };
 
   //--- 기능 정의 ---
   // 화면 랜더링(컴포넌트가 처음 랜더링 될떄 상품 목록을 불러옴
