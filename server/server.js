@@ -365,6 +365,24 @@ app.put('/api/products/:id', authMiddleware, upload.fields([{name: 'mainImage', 
         console.error('상품 수정 중 에러 발생')
         res.status(500).json({message: '서버 오류가 발생했습니다. 정보수정'});
     }
+});
+
+app.delete('/api/products/:id', authMiddleware, async ( req, res ) => {
+    try {
+        const productId = req.params.id;
+        // findOneAndDelete를 호출하면, 위에서 만든 pre 훅이 자동으로 먼저 실행됩니다.
+        const deletedProduct = await Product.findOneAndDelete({
+            _id: productId,
+            seller: req.user.id,
+        });
+        
+        if (!deletedProduct) {
+            res.status(404).json({message: '상품이 없거나 삭제할 권한이 없습니다.'});
+        }
+        res.json({message: '상품이 성공적으로 삭제되었습니다.'});
+    } catch (error) {
+        res.status(500).json({message: '서버오류 상품삭제'});
+    }
 })
 // 상품상세 라우트 :id의 : 는 뒤에 변수를 사용하겠다는 선언
 // 클라이언트에서 전달받은 id를 가지고 Product 모델에서 해당 데이터를 찾아 인스턴스를 생성하고 해당 객체를 응답해주는 라우트

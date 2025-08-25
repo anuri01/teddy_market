@@ -36,6 +36,18 @@ function ProductDetailPage() {
         fetchProduct();
     }, [productId]);
 
+    // 삭제 함수 
+    const handleDeleteProduct = async () => {
+        if(!window.confirm('상품을 정말 삭제하시겠어요?')) return;
+        try {
+        await api.delete(`/products/${productId}`);
+        toast.success('상품이 삭제됐습니다.');
+        navigate('/');
+        } catch(error) {
+            toast.error('삭제에 실패했어요');
+        }
+
+    }
     // -- 화면 ui 그리기 
     // 로딩중 조기반환
     if(isLoading) {
@@ -50,10 +62,6 @@ function ProductDetailPage() {
         {/* <a href="#">메인으로 이동</a> react의 내부 라우트로 이동이기 때문에 a태그 사용안함 */}
         </div>
         return;
-    }
-
-    const handleDelete = () => {
-        toast('삭제 기능은 추후 지원합니다.');
     }
 
     const isAuthor = isLoggedIn && user?.id === product.seller._id;
@@ -84,7 +92,7 @@ function ProductDetailPage() {
             {/* <div className="product-actions"> */}
             { isAuthor ? (
             <div className="product-actions">
-                    <button type="submit" onClick={handleDelete} className="button button-secondary button-tertiary">상품삭제</button>
+                    <button type="submit" onClick={handleDeleteProduct} className="button button-secondary button-tertiary">상품삭제</button>
                     <Link to={`/edit/${productId}`} className="button button-primary">정보수정</Link>
             </div>
             ) : (
