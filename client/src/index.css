@@ -8,6 +8,17 @@ body {
   background-color: #f0f2f5;
 }
 
+.loading-message {
+  margin: 0 auto;
+  /* align-items: center; */
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  width: 80%;
+  margin-top: 3rem;
+  padding: 1rem;
+}
+
 /* 모든 요소에 box-sizing 적용 (레이아웃 편의성) */
 *, *::before, *::after {
   box-sizing: border-box;

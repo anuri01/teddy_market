@@ -402,11 +402,46 @@ app.get('/api/products/:id', async( req, res ) => {
 });
 
 app.get('/api/products', async( req, res ) => {
-    const limit = parseInt(req.query.limit) || '4';
     try {
+        // 페이지네이션 추가 : URL 쿼리에서 page와 limit 값을 가져옵니다. 없으면 기본값을 사용합니다.
+        // const page = parseInt(req.query.page) || '1';
+        const limit = parseInt(req.query.limit) || '4';
+        
+        // req에 오는 페이지 넘버에 따라 건너뛸 상품 개수를 지정
+        // const skip = ( page -1 ) * limit;
+
         // find({})는 db의 모든 정보를 가져오는 메소드. 전체 목록을 가져올때는 sort 메소드를 사용해 
+        // 전체 상품목록에서 스킵할 상품개수와 불러올 상품개수를 지정해 담는다. 
         const products = await Product.find({}).sort({createdAt: -1}).limit(limit).populate('seller', 'username');
-        res.status(200).json(products)
+
+        // 전체 상품개수를 세, 총 몇 페이지가 필요한지 계산
+        const totalProducts = Product.countDocuments();
+        const totalPage = Math.ceil(totalProducts/limit); // Math.celi는 올림함수.
+
+        res.status(200).json({products});
+    } catch(error) {
+        res.status(500).json({message: '서버 오류가 발생했습니다.(상품전체목록)'})
+    }
+});
+
+app.get('/api/allproducts', async( req, res ) => {
+    try {
+        // 페이지네이션 추가 : URL 쿼리에서 page와 limit 값을 가져옵니다. 없으면 기본값을 사용합니다.
+        const page = parseInt(req.query.page) || '1';
+        const limit = parseInt(req.query.limit) || '4';
+        
+        // req에 오는 페이지 넘버에 따라 건너뛸 상품 개수를 지정
+        const skip = ( page -1 ) * limit;
+
+        // find({})는 db의 모든 정보를 가져오는 메소드. 전체 목록을 가져올때는 sort 메소드를 사용해 
+        // 전체 상품목록에서 스킵할 상품개수와 불러올 상품개수를 지정해 담는다. 
+        const products = await Product.find({}).sort({createdAt: -1}).skip(skip).limit(limit).populate('seller', 'username');
+
+        // 전체 상품개수를 세, 총 몇 페이지가 필요한지 계산
+        const totalProducts = await Product.countDocuments();
+        const totalPage = Math.ceil(totalProducts/limit); // Math.celi는 올림함수.
+
+        res.status(200).json({ products, totalPage, currentPage: page, totalProducts });
     } catch(error) {
         res.status(500).json({message: '서버 오류가 발생했습니다.(상품전체목록)'})
     }

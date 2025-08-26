@@ -16,7 +16,7 @@ function HomePage() {
       const fetchProducts = async () => {
       try {
       const response = await api.get('/products?limit=4');
-      return setProductList(response.data);
+      return setProductList(response.data.products);
     } catch(error) {
       console.error('상품 목록을 가져올 수 없습니다.', error);
     }
