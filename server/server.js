@@ -13,6 +13,7 @@ import { Strategy as NaverStrategy } from 'passport-naver'; // Naver passport �
 import { Strategy as KakaoStrategy } from 'passport-kakao'; // Kakao passport 임포트
 import User from './models/User.js'; // User db스키마 임포트
 import Product from './models/Product.js'; // Product db스키마 임포트
+import Orders from './models/Orders.js'; // Orders db스키마 임포트
 import upload from './upload.js';
 import { s3 } from './upload.js'; // 👈 이 줄 추가
 import { memoryStorage } from 'multer';
@@ -446,6 +447,52 @@ app.get('/api/allproducts', async( req, res ) => {
         res.status(500).json({message: '서버 오류가 발생했습니다.(상품전체목록)'})
     }
 });
+
+// 구매하기 - 주문서 생성
+app.post('/api/orders', authMiddleware, async (req, res) => {
+    try { 
+        const { productId, payment, shipingAddress } = req.body;
+        if (!productId) {
+            return res.status(400).json({message: '상품 ID가 필요합니다.'});
+        }
+
+        const newOrder = new Orders({
+            product: productId,
+            buyer: req.user.id,
+            payment: payment,
+            delivery_address: shipingAddress,
+        })
+        await newOrder.save();
+        res.status(200).json(newOrder);
+
+    } catch(error) {
+        res.status(500).json({message: '서버 오류 발생(구매)'})
+    }
+
+});
+
+// 구매하기 - 주문서 생성
+app.post('/api/orders/initate', authMiddleware, async (req, res) => {
+    try { 
+        const { productId } = req.body;
+        if (!productId) {
+            return res.status(400).json({message: '상품 ID가 필요합니다.'});
+        }
+         // 새로운 주문 문서를 'pending' 상태로 생성합니다.
+        const newOrder = new Orders({
+            product: productId,
+            buyer: req.user.id,
+            status: 'pending',
+        })
+        await newOrder.save();
+        res.status(201).json({ orderId: newOrder._id }); // 이름표를 달아서 주문id전달
+
+    } catch(error) {
+        res.status(500).json({message: '서버 오류 발생(구매)'})
+    }
+
+});
+
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
