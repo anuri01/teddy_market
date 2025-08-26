@@ -493,6 +493,26 @@ app.post('/api/orders/initate', authMiddleware, async (req, res) => {
 
 });
 
+// 구매하기 - 배송지 정보 저장
+app.put('/api/orders/:orderId/shipping', authMiddleware, async ( req, res) => {
+    try {
+        const shipData = req.body;
+        const { orderId } = req.params;
+        const updateToShippingInfo = await Orders.findOneAndUpdate(
+            {_id: orderId, buyer: req.user.id}, // 구매자가 일치하는지도 재확인
+            {$set: {shippingAddress: shipData}},
+            {new: true}
+            );
+    if(!updateToShippingInfo) {
+        return res.status(404).json({message:'주문을 찾을 수 없거나 권한이 없습니다.'});
+    }
+    res.json(updateToShippingInfo);
+
+    } catch(error) {
+        console.error("배송지 정보 추가 중 에러 발생:", error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
