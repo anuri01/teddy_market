@@ -402,10 +402,10 @@ app.get('/api/products/:id', async( req, res ) => {
 });
 
 app.get('/api/products', async( req, res ) => {
-    const limit = req.query.limit;
+    const limit = parseInt(req.query.limit) || '4';
     try {
         // find({})는 db의 모든 정보를 가져오는 메소드. 전체 목록을 가져올때는 sort 메소드를 사용해 
-        const products = await Product.find({}).limit(limit).sort({createdAt: -1}).populate('seller', 'username');
+        const products = await Product.find({}).sort({createdAt: -1}).limit(limit).populate('seller', 'username');
         res.status(200).json(products)
     } catch(error) {
         res.status(500).json({message: '서버 오류가 발생했습니다.(상품전체목록)'})
