@@ -277,14 +277,15 @@ app.post('/api/products', authMiddleware, upload.fields([
                     quantity: quantity,
                     seller: req.user.id,
                 });
-                await newProduct.save();
-                res.status(201).json({newProduct, message: '상품 등록 완료'});
+                const ProductInfo = await newProduct.save();
+                res.status(201).json(ProductInfo);
             } catch (error) {
                 console.error("상품 등록 중 에러 발생", error);
                 res.status(500).json({message: '서버 오류가 발생했습니다.'});
             }
 });
 
+// 상품 수정 라우트
 app.put('/api/products/:id', authMiddleware, upload.fields([{name: 'mainImage', maxCount:1}, { name: 'attachments', maxCount: 5}]), async ( req, res) => {
     try {
         const { title, content, price, salePrice, quantity, existingAttachments, deletedAttachments, mainImageUrl } = req.body;
@@ -360,13 +361,14 @@ app.put('/api/products/:id', authMiddleware, upload.fields([{name: 'mainImage', 
             return res.json(404).json({messge:'상품이 없거나 판매자가 아닙니다.'});
         }
 
-        res.status(201).json(updateProduct, {message: '수정성공'});
+        res.status(201).json(updateProduct);
     } catch (error) {
         console.error('상품 수정 중 에러 발생')
         res.status(500).json({message: '서버 오류가 발생했습니다. 정보수정'});
     }
 });
 
+// 상품 삭제 라우트
 app.delete('/api/products/:id', authMiddleware, async ( req, res ) => {
     try {
         const productId = req.params.id;
@@ -400,9 +402,10 @@ app.get('/api/products/:id', async( req, res ) => {
 });
 
 app.get('/api/products', async( req, res ) => {
+    const limit = req.query.limit;
     try {
         // find({})는 db의 모든 정보를 가져오는 메소드. 전체 목록을 가져올때는 sort 메소드를 사용해 
-        const products = await Product.find({}).sort({createdAt: -1}).populate('seller', 'username');
+        const products = await Product.find({}).limit(limit).sort({createdAt: -1}).populate('seller', 'username');
         res.status(200).json(products)
     } catch(error) {
         res.status(500).json({message: '서버 오류가 발생했습니다.(상품전체목록)'})

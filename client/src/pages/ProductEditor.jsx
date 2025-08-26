@@ -134,7 +134,7 @@ function ProductEditor() {
     try {
         let response; // 모드에 따라 내용이 바뀌므로 let으로 선언
         if (isEditMode) {
-            response =await api.put(`/products/${productId}`, formData);
+            response = await api.put(`/products/${productId}`, formData);
             toast.success('상품이 수정되었습니다!');
             
         } else {

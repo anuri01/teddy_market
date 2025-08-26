@@ -15,7 +15,7 @@ function HomePage() {
   useEffect(() => {
       const fetchProducts = async () => {
       try {
-      const response = await api.get('/products');
+      const response = await api.get('/products?limit=4');
       return setProductList(response.data);
     } catch(error) {
       console.error('상품 목록을 가져올 수 없습니다.', error);
