@@ -496,12 +496,12 @@ app.post('/api/orders/initiate', authMiddleware, async (req, res) => {
 // 구매하기 - 배송지 정보 저장
 app.put('/api/orders/:orderId/shipping', authMiddleware, async ( req, res) => {
     try {
-        const shipData = req.body; // 구조분해 할당도 가능하지만 용도에 맞지 않음. 
-        console.log(shipData);
+        // const shipData = req.body; // 구조분해 할당도 가능하지만 용도에 맞지 않음. 
+        const { shippingAddress, paymentMethod } = req.body;
         const { orderId } = req.params; // 구조분해 할당으로 가져옴. 구조분해 할당은 원시데이터는 안됨. 구분이 안될때는 데이터 타입을 찍어봐야 함. 
         const updateToShippingInfo = await Orders.findOneAndUpdate(
             {_id: orderId, buyer: req.user.id}, // 구매자가 일치하는지도 재확인
-            {$set: {shippingAddress: shipData}}, // $set 명령으로 해당하는 필드만 업데이트. 이걸 사용하지 않으면 업데이트 내용이 없는 기존 필드가 삭제됨
+            {$set: {shippingAddress, paymentMethod }}, // $set 명령으로 해당하는 필드만 업데이트. 이걸 사용하지 않으면 업데이트 내용이 없는 기존 필드가 삭제됨
             {new: true}
             );
     if(!updateToShippingInfo) {

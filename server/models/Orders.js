@@ -15,7 +15,7 @@ const ordersSchema = new mongoose.Schema({
     address1: { type: String }, // 주소
     address2: { type: String }, // 상세 주소는 선택 사항}, 
     },
-    payment: { type: String},
+    paymentMethod: { type: String},
     // 나중에 실제 결제 정보(가격, 수량 등)를 추가할 수 있습니다.
 
      // 주문 상태 (나중 확장을 위해 추가)

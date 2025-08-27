@@ -14,6 +14,7 @@ function PurchasePage() {
     const [postalCode, setPostalCode] = useState('');
     const [address1, setAddress1] = useState('');
     const [address2, setAddress2] = useState('');
+    const [ paymentMethod, setPaymentMethod ] = useState('') // 결제 수단(기본값 설정)
 
     const navigate = useNavigate();
 
@@ -29,17 +30,16 @@ function PurchasePage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         //(다음 단계 : 배송지 정보저장 api 호출)
-        if(!recipientName || !postalCode || !address1) {
-            return toast.error('배송주소와 받는분은 필수 사항입니다.');
+        if(!recipientName || !postalCode || !paymentMethod) {
+            return toast.error('배송주소와 받는분, 결제수단은 필수 사항입니다.');
         }
         try {
-            // const shipData = { postalCode, address1, address2 };
-            const response = await api.put(`/orders/${orderId}/shipping`, { recipientName, postalCode, address1, address2 }); // 객체 정보는 {}로 감싸서 객체로 전달할 것
-            console.log('배송지 저장성공', response.data);
-            // navigate(`/payment/${orderId}`);
+            const shippingAddress = { recipientName, recipientPhone, postalCode, address1, address2 };
+            await api.put(`/orders/${orderId}/shipping`, { shippingAddress, paymentMethod }); // 객체 정보는 {}로 감싸서 객체로 전달할 것
+            navigate(`/payment/${orderId}`);
 
         } catch(error) {
-            console.error('배송지 저장에 실패했습니다.');
+            toast.error('주문 처리중 오류가 발생했습니다.');
         }
     };
 
@@ -66,6 +66,15 @@ function PurchasePage() {
                 </div>
                 <input className="form-input" placeholder="기본 주소" value={address1} readOnly />
                 <input className="form-input" placeholder="상세 주소" value={address2} onChange={e => setAddress2(e.target.value)} />
+                <p className="form-section-title">결제수단</p> 
+                <div className="payment-method-group">
+                    <input id="card" type="radio" name="payment" value="card" onChange={(e) => setPaymentMethod(e.target.value)} className="payment-method" /> 
+                    <label htmlFor="card" className="button payment-button">카드결제</label>
+                    <input id="simple" type="radio" name="payment" value="simple" onChange={(e) => setPaymentMethod(e.target.value)} className="payment-method" />
+                    <label htmlFor="simple" className="button payment-button">간편결제</label>
+                    <input id="cash" type="radio" name="payment" value="cash" onChange={(e) => setPaymentMethod(e.target.value)} className="payment-method" /> 
+                    <label htmlFor="cash" className="button payment-button">계좌이체</label>
+                </div>
                 <button type="submit" className="button button-primary">다음</button>
 
             </form>
