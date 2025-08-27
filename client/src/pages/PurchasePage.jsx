@@ -9,8 +9,8 @@ function PurchasePage() {
     const { orderId: orderId } = useParams();
     const [ order, setOrder ] = useState(null);
 
-    const [recipientName, setRecipientName ] = useState();
-    const [recipientPhone, setRecipientPhone ] = useState();
+    const [recipientName, setRecipientName ] = useState('');
+    const [recipientPhone, setRecipientPhone ] = useState('');
     const [postalCode, setPostalCode] = useState('');
     const [address1, setAddress1] = useState('');
     const [address2, setAddress2] = useState('');
