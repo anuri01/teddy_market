@@ -82,18 +82,23 @@ body {
 
 .action-button {
   display: inline-flex;
+  min-width: 6rem;
   align-items: center;
   justify-content: center;
   height: 2.63rem;
   padding: 0 0.5rem;
   border-radius: 8px;
-  /* border: 1px solid transparent; */
+  border: 1px solid transparent;
   font-size: 0.875rem;
   font-family: inherit;
   font-weight: bold;
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.2s;
+}
+
+.action-button:hover {
+  background-color: #1faad5;
 }
 
 .button-primary {
