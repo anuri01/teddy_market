@@ -493,7 +493,7 @@ app.post('/api/orders/initiate', authMiddleware, async (req, res) => {
 
 });
 
-// 구매하기 - 배송지 정보 저장
+// 구매하기 - 배송지 정보 및 결제수단 저장
 app.put('/api/orders/:orderId/shipping', authMiddleware, async ( req, res) => {
     try {
         // const shipData = req.body; // 구조분해 할당도 가능하지만 용도에 맞지 않음. 
@@ -514,6 +514,36 @@ app.put('/api/orders/:orderId/shipping', authMiddleware, async ( req, res) => {
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 })
+
+// 구매완료 
+app.put('/api/orders/:orderId/complete', authMiddleware, async ( req, res ) => {
+    try {
+        const { payOk } = req.body;
+        const { orderId } = req.params;
+        if (!payOk) {
+            return res.status(400).json({message: '결제 처리가 되지 않았습니다.'})
+        }
+        const orderComplete = await Orders.findOneAndUpdate(
+            {_id: orderId, buyer: req.user.id},
+            { $set: {status: 'complete'}},
+            { new: true}
+        ).populate({  // popullate를 중첩해 상품정보와 판매자 이름까지 가지고 옴. 가져올 필드 및 db명은 텍스트 형태로 보내야 함. 객체나 변수명 형태 아님! 객체 키값을 만들어 객체 형태로 가져올 수 있음. 
+            path: 'product',
+            populate: {
+                path: 'seller',
+                select: 'username' // seller username 필드만 선택
+            }
+        })
+         
+        if(!orderComplete) {
+            return res.status(404).json({message: '주문정보를 찾을 수 없습니다.'});
+        }
+        res.json(orderComplete);
+    } catch(error) {
+        console.error("주문 완료 처리 중 에러 발생", error);
+        res.status(500).json({message: '서버 오류 발생(완료처리)'});
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)

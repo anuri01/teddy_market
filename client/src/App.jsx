@@ -9,6 +9,7 @@ import ProductEditor from './pages/ProductEditor';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ProductListPage from './pages/ProductListPage';
 import PurchasePage from './pages/PurchasePage';
+import PaymentPage from './pages/PaymentPage';
 import ProfilePage from './pages/ProfilePage';
 // import ProductEditor1 from './pages/ProductEditors1';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
@@ -43,7 +44,8 @@ function App() {
           {/* 👇 콜백 경로 추가 */}
           <Route path='/write' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
           <Route path='/edit/:productId' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
-          <Route path='/purchase/:orderId' element={<PurchasePage />}></Route>
+          <Route path='/purchase/:orderId' element={<ProtectedRoute><PurchasePage /></ProtectedRoute>}></Route>
+          <Route path='/payment/:orderId' element={<ProtectedRoute><PaymentPage /></ProtectedRoute>}></Route>
           <Route path='/productlist' element={<ProductListPage />}></Route>
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
           <Route path='/auth/naver/callback' element={<NaverCallback />} />

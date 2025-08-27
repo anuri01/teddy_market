@@ -1,0 +1,15 @@
+.payment-page-container {
+    width: 100%;
+    text-align: center;
+}
+
+.payment-page-container h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    padding: 2rem 1rem;
+    margin: 2rem 1rem;
+}
+
+.float {
+    margin-top: 350px;
+}
