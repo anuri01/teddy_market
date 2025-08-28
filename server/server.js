@@ -32,7 +32,7 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('몽고디비에 연결됨'))
     .catch(err => console.error('디비 연결 실패', err));
 
-// API라우트 영역
+// API라우트 영역 
 
 // 인증 미들웨어 - 로그인된 사용자 인증이 필요한 라우트에 사용. 클라이언트가 보낸 헤더 정보에서 토큰을 추출해 인증함
 const authMiddleware = ( req, res, next ) => {
