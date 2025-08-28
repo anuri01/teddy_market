@@ -526,9 +526,20 @@ app.put('/api/orders/:orderId/complete', authMiddleware, async ( req, res ) => {
 app.get('/api/orders/:orderId', authMiddleware, async ( req, res ) => {
     try {
     const { orderId } = req.params;
-    const orderInfo = await Orders.findOne({_id: orderId, buyer: req.user.id }).populate('product');
+    const orderInfo = await Orders.findOne({_id: orderId, buyer: req.user.id, status: 'complete', isPaid: true }).populate([ {
+        path: 'product',
+        populate: {
+            path: 'seller',
+            select: 'username'
+            },
+        },
+        { path: 'buyer',
+          select: 'username',
+        }
+    ]);
     if(!orderInfo) {
-        return res.status(404).json({message:'주문 정보를 찾을 수 없습니다.'});
+        return res.status(404).json({message:'완료된 주문을 찾을 수 없습니다.', redirect: '/productlist'}); //클라이언트에서 리디렉션 정보 제공
+        
     }
     res.json(orderInfo);
     } catch (error) {
