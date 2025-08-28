@@ -449,29 +449,6 @@ app.get('/api/allproducts', async( req, res ) => {
 });
 
 // 구매하기 - 주문서 생성
-app.post('/api/orders', authMiddleware, async (req, res) => {
-    try { 
-        const { productId, payment, shipingAddress } = req.body;
-        if (!productId) {
-            return res.status(400).json({message: '상품 ID가 필요합니다.'});
-        }
-
-        const newOrder = new Orders({
-            product: productId,
-            buyer: req.user.id,
-            payment: payment,
-            delivery_address: shipingAddress,
-        })
-        await newOrder.save();
-        res.status(200).json(newOrder);
-
-    } catch(error) {
-        res.status(500).json({message: '서버 오류 발생(구매)'})
-    }
-
-});
-
-// 구매하기 - 주문서 생성
 app.post('/api/orders/initiate', authMiddleware, async (req, res) => {
     try { 
         const { productId } = req.body;
@@ -515,7 +492,7 @@ app.put('/api/orders/:orderId/shipping', authMiddleware, async ( req, res) => {
     }
 })
 
-// 구매완료 
+// 구매하기 - 구매완료(결제완료)
 app.put('/api/orders/:orderId/complete', authMiddleware, async ( req, res ) => {
     try {
         const { isPaid } = req.body;
@@ -544,6 +521,20 @@ app.put('/api/orders/:orderId/complete', authMiddleware, async ( req, res ) => {
         res.status(500).json({message: '서버 오류 발생(완료처리)'});
     }
 });
+
+// 구매하기 - 구매정보 전달
+app.get('/api/orders/:orderId', authMiddleware, async ( req, res ) => {
+    try {
+    const { orderId } = req.params;
+    const orderInfo = await Orders.findOne({_id: orderId, buyer: req.user.id }).populate('product');
+    if(!orderInfo) {
+        return res.status(404).json({message:'주문 정보를 찾을 수 없습니다.'});
+    }
+    res.json(orderInfo);
+    } catch (error) {
+        res.status(500).json({message: '서버오류 발생'});
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
