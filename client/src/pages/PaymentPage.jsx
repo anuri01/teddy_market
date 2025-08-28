@@ -27,7 +27,7 @@ function PaymentPage() {
         const response = await api.put(`/orders/${orderId}/complete`, { isPaid });
         if(response) {
             toast.success(`${response.data.buyer.username}님, 정상구매 되었습니다.`);
-            setTimeout(() => navigate(`/order-complete/${orderId}`), 500);
+            // setTimeout(() => navigate(`/order-complete/${orderId}`), 500); 완료 페이지 추후 제공.
         }
         } catch(error) {
             toast.error('상품구매에 실패했습니다.');
