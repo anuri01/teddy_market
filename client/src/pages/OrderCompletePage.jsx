@@ -6,7 +6,7 @@ import './OrderCompletePage.css'
 
 function OrderCompletePage() {
 
-const [ orderInfo, setOrderInfo ] = useState('');
+const [ orderInfo, setOrderInfo ] = useState(null);
 const [ isLoading, setIsLoading ] = useState(true);
 const { orderId } = useParams();
 const navigate = useNavigate();
