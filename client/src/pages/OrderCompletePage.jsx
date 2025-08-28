@@ -14,15 +14,29 @@ const location = useLocation();
 
 useEffect( () => {
     const fetchOrderInfo = async () => {
-        // 1차 검증: React Router state 확인
-        if(!location.state?.fromPayment){
-            toast.error('잘못된 접근입니다. 정상적인 구매 절차를 거쳐주세요.');
-            navigate('/productlist');
-            return;
-        }
+        // 1차 검증: React Router state 확인 - 네이버페이 처리 방법 찾을때 까지 보류
+        // if(!location.state?.fromPayment){
+        //     toast.error('잘못된 접근입니다. 정상적인 구매 절차를 거쳐주세요.');
+        //     navigate('/productlist');
+        //     return;
+        // }
         try {
             setIsLoading(true);
-            // 2차 검증: 서버에서 주문 상태 확인
+            // url에서 네이버페이 결제 완료 파라미터 확인
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentId = urlParams.get('paymentId');
+            const reusltCode = urlParams.get('resultCode');
+
+            if (paymentId && reusltCode === 'Success') {
+                await api.put(`/orders/${orderId}/complete`, {
+                    isPaid: true,
+                    paymentId: paymentId,
+                    paymentMethod: 'naverpay',
+                });
+                toast.success('네이버페이 결제가 완료되었습니다.');
+            }
+            
+            // 2차 검증: 서버에서 주문 상태 확인, 주문정보 조회
             const response = await api.get(`/orders/${orderId}`);
             setOrderInfo(response.data);
         } catch(error) {

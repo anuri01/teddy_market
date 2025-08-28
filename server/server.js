@@ -547,6 +547,27 @@ app.get('/api/orders/:orderId', authMiddleware, async ( req, res ) => {
     }
 })
 
+// 주문 정보 조회 (구매 페이지용)
+app.get('/api/orders/:orderId/info', authMiddleware, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        
+        const order = await Orders.findOne({
+            _id: orderId,
+            buyer: req.user.id
+        }).populate('product').populate('buyer', 'username');
+        
+        if (!order) {
+            return res.status(404).json({ message: '주문을 찾을 수 없습니다.' });
+        }
+        
+        res.json(order);
+    } catch (error) {
+        console.error('주문 정보 조회 실패:', error);
+        res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
 });
