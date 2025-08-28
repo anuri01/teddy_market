@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
 import './ProductListPage.css';
@@ -11,6 +11,7 @@ function ProductListPage() {
     const [ isLoading, setIsLoading ] = useState(true);
     const [ hasmore, setHasMore ] = useState(true); // 불러올 상품이 더 있는지 기억할 상태. 끝까지 불러왔다면 더보기 버튼 삭제 또는 변경
     const [ totalProducts, setTotalProducts ] = useState(0);
+    const navigate = useNavigate();
     // const [ searchParams, setSearchParams ] = useSearchParams(); 
 
     useEffect(() => {
@@ -46,9 +47,19 @@ function ProductListPage() {
         setPage(prevPage => prevPage + 1);
     }
 
-    const handleBuy = () => {
-    toast('상품구매 기능은 추후 지원됩니다.');
-  }
+     const handleBuy = async (productId) => {
+    try{
+    // 1. 서버에 '임시 주문서' 생성을 요청하고 orderId를 받는다. 
+    const response = await api.post('/orders/initiate', {productId});
+    const orderId = response.data.orderId;
+    
+    // 2. 받은 오더id를 가지고 구매 페이지로 이동한다. 
+    navigate(`/purchase/${orderId}`);
+    // toast('상품구매 기능은 추후 지원됩니다.');
+    } catch(error) {
+      console.error('구매페이지 이동에 실패했습니다.');
+    }
+  };
 
  // 로딩중 조기반환
     if(isLoading) {
