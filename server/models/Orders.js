@@ -24,6 +24,12 @@ const ordersSchema = new mongoose.Schema({
     default: 'completed', // 더미 결제이므로 바로 '완료' 상태로 저장
     required: true,
   },
+  
+  isPaid: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
 },
 {timestamps: true});
 

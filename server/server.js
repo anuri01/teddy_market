@@ -518,22 +518,22 @@ app.put('/api/orders/:orderId/shipping', authMiddleware, async ( req, res) => {
 // 구매완료 
 app.put('/api/orders/:orderId/complete', authMiddleware, async ( req, res ) => {
     try {
-        const { payOk } = req.body;
+        const { isPaid } = req.body;
         const { orderId } = req.params;
-        if (!payOk) {
+        if (!isPaid) {
             return res.status(400).json({message: '결제 처리가 되지 않았습니다.'})
         }
         const orderComplete = await Orders.findOneAndUpdate(
             {_id: orderId, buyer: req.user.id},
-            { $set: {status: 'complete'}},
+            { $set: {status: 'complete', isPaid }},
             { new: true}
         ).populate({  // popullate를 중첩해 상품정보와 판매자 이름까지 가지고 옴. 가져올 필드 및 db명은 텍스트 형태로 보내야 함. 객체나 변수명 형태 아님! 객체 키값을 만들어 객체 형태로 가져올 수 있음. 
             path: 'product',
             populate: {
                 path: 'seller',
-                select: 'username' // seller username 필드만 선택
-            }
-        })
+                select: 'username', // seller username 필드만 선택
+            },
+        }).populate('buyer', 'username')
          
         if(!orderComplete) {
             return res.status(404).json({message: '주문정보를 찾을 수 없습니다.'});
