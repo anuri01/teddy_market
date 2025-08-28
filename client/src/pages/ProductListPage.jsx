@@ -96,7 +96,7 @@ function ProductListPage() {
                             <p>판매가격: {product.price.toLocaleString()}원</p>
                             </div>
                             </Link>
-                            <button type="submit" onClick={handleBuy} className="buy-action-button button-primary">구매하기</button>
+                            <button type="submit" onClick={() => handleBuy(product._id)} className="buy-action-button button-primary">구매하기</button>
                             {/* <Link to={`/buy/${product._id}`}>
                             <div className="buy-action-button button-primary">
                             구매하기
