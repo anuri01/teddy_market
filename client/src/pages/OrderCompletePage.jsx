@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axiosConfig";
-import { useParams, Link, useLocation, useNavigate } from "react-router-dom";
+import { useParams, Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import './OrderCompletePage.css'
 
@@ -11,15 +11,18 @@ const [ isLoading, setIsLoading ] = useState(true);
 const { orderId } = useParams();
 const navigate = useNavigate();
 const location = useLocation();
+const [searchParams] = useSearchParams();
 
 useEffect( () => {
     const fetchOrderInfo = async () => {
+        if(!searchParams.get('resultCode')) {
         // 1차 검증: React Router state 확인 - 네이버페이 처리 방법 찾을때 까지 보류
-        // if(!location.state?.fromPayment){
-        //     toast.error('잘못된 접근입니다. 정상적인 구매 절차를 거쳐주세요.');
-        //     navigate('/productlist');
-        //     return;
-        // }
+            if(!location.state?.fromPayment){
+                toast.error('잘못된 접근입니다. 정상적인 구매 절차를 거쳐주세요.');
+                // navigate('/productlist');
+                return;
+            }
+        }
         try {
             setIsLoading(true);
             // url에서 네이버페이 결제 완료 파라미터 확인
