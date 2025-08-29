@@ -16,7 +16,7 @@ const [searchParams] = useSearchParams();
 useEffect( () => {
     const fetchOrderInfo = async () => {
         if(!searchParams.get('resultCode')) {
-        // 1차 검증: React Router state 확인 - 네이버페이 처리 방법 찾을때 까지 보류
+        // 1차 검증: React Router state 확인 - 
             if(!location.state?.fromPayment){
                 toast.error('잘못된 접근입니다. 정상적인 구매 절차를 거쳐주세요.');
                 // navigate('/productlist');
@@ -56,7 +56,7 @@ useEffect( () => {
         }
     }
     fetchOrderInfo();    
-    }, [orderId, navigate, location.state]);
+    }, [orderId, navigate, location.state, searchParams]);
 
 
     if (isLoading) {
