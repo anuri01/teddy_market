@@ -2,7 +2,6 @@
   width: 100%;
 
 }
-
 .prepare-message {
     width: 100%;
     text-align: center;
@@ -13,4 +12,101 @@
 
 .prepare-message h1{
     font-size: 1.5rem;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profile-header h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-header p {
+  color: #868e96;
+}
+
+.profile-tabs {
+  display: flex;
+  width: 100%;
+  border-bottom: 2px solid #e9ecef;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  color: #868e96;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-button.active {
+  color: #31BBE5;
+  border-bottom-color: #31BBE5;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.list-item-card {
+  display: flex;
+  /* flex-direction: column; */
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s;
+}
+
+.list-item-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.item-info {
+  flex-grow: 1;
+}
+
+.item-info h3 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.item-info p {
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.item-info span {
+  font-size: 0.8rem;
+  color: #868e96;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 3rem 0;
+  color: #868e96;
 }

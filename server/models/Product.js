@@ -43,14 +43,14 @@ productSchema.pre('findOneAndDelete', { document: false, query: true }, async fu
         // 3. 대표 이미지가 있으면 삭제 목록에 추가
         if (productToDelete.mainImageUrl) {
             const MainImageKey = decodeURIComponent(new URL(productToDelete.mainImageUrl).pathname.substring(1));
-            filesToDelete.push = { Key: MainImageKey };
+            filesToDelete.push({ Key: MainImageKey });
         }
         
         // 4. 첨부 파일들이 있으면, 삭제 목록에 모두 추가합니다.
         if ( productToDelete.files && productToDelete.files.length > 0) {
             productToDelete.files.forEach(file => {
                 const attachmentKey = decodeURIComponent(new URL(file.url).pathname.substring(1));
-                filesToDelete.push = {Key: attachmentKey};
+                filesToDelete.push({Key: attachmentKey});
             }) 
             console.log(filesToDelete)
         }

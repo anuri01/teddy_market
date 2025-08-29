@@ -18,6 +18,7 @@ import upload from './upload.js';
 import { s3 } from './upload.js'; // 👈 이 줄 추가
 import { memoryStorage } from 'multer';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { populate } from 'dotenv';
 // (나중에 Product, Chat 모델도 여기에 추가)
 
 //express 앱 설정
@@ -565,6 +566,43 @@ app.get('/api/orders/:orderId/info', authMiddleware, async (req, res) => {
     } catch (error) {
         console.error('주문 정보 조회 실패:', error);
         res.status(500).json({ message: '서버 오류가 발생했습니다.' });
+    }
+});
+
+// 주문 정보 조회(내정보 페이지용)
+app.get('/api/users/my-orders', authMiddleware, async (req, res) => {
+    try {
+        // const { buyer } = req.body;
+        // if(!buyer === req.user.id) {
+        //     return res.status(400).json({message: '주문자와 로그인한 사용자가 일치하지 않습니다.'});
+        // }
+        const orders = await Orders.find({buyer: req.user.id, isPaid:  true, status: 'complete'}).sort({createdAt : -1}).populate(
+            {
+                path:'product',
+                populate: {
+                    path:'seller',
+                    select:'username'
+                },
+            }
+        );
+        res.json(orders);
+    } catch(error) {
+        console.error('구매내역 정보 조회 실패:', error);
+        res.status(500).json({message: '서버오류 발생'});
+    }
+});
+
+// 등록 상폼 조회(내정보 페이지용)
+app.get('/api/users/my-products', authMiddleware, async (req, res) => {
+    try {
+        const myProducts = await Product.find({seller: req.user.id}).sort({createdAt: -1 });
+        if(!myProducts) {
+            return res.status(404).json({message: '판매 등록한 상품이 없습니다.'});
+        };
+        res.json(myProducts);
+    }catch(error) {
+        console.error('판매상품 정보 조회 실패:', error);
+        res.status(500).json({message: '서버오류 발생'});
     }
 });
 
