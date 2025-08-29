@@ -88,7 +88,7 @@ useEffect( () => {
             </div>
 
             <div className="page-actions">
-                <Link to="/profile" className="button button-secondary">내 구매내역 보기</Link>
+                <Link to="/profile" className="button button-secondary">구매내역 보기</Link>
                 <Link to="/" className="button button-primary">계속 쇼핑하기</Link>
             </div>
     </div>
