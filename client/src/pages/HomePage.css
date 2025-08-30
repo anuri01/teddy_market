@@ -9,9 +9,10 @@
     gap: 0.2rem;
 }
 .banner-image {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
+   width: 100%;
+  height: 200px; /* 고정 높이 설정 (원하는대로 조절) */
+  object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
+  border-radius: 8px; /* 이미지 자체에 둥근 모서리 */
     
 }
 
@@ -133,4 +134,139 @@ background-color:#52a8f3;
   padding: 0.8rem 1.5rem;
   border-radius: 50px; /* 타원형 버튼 */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* --- 👇 배너 영역 스타일 --- */
+.banner-area {
+  width: 100%; /* 부모 컨테이너에 맞춰 꽉 채움 */
+  max-width: 1200px; /* 최대 너비 제한 (선택 사항) */
+  margin-bottom: 3rem;
+}
+
+.slick-slider {
+  position: relative;
+  display: block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -khtml-user-select: none;
+  -ms-touch-action: pan-y;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 8px; /* 배너 영역 자체에 둥근 모서리 */
+  overflow: hidden; /* 이미지가 튀어나오지 않도록 */
+}
+
+.banner-slide {
+  outline: none; /* 슬라이더 클릭 시 파란 테두리 제거 */
+}
+
+.banner-slide a {
+  display: block;
+}
+
+.no-banners {
+    text-align: center;
+    padding: 50px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    color: #888;
+}
+
+/* slick dots (페이지네이션 점) 스타일 */
+.slick-dots {
+  position: absolute;
+  bottom: 10px;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.slick-dots li {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 5px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.slick-dots li button {
+  font-size: 0;
+  line-height: 0;
+  display: block;
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  cursor: pointer;
+  color: transparent;
+  border: 0;
+  outline: none;
+  background: transparent;
+}
+
+.slick-dots li button:before {
+  font-family: 'slick';
+  font-size: 6px; /* 점 크기 */
+  line-height: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  content: '•';
+  text-align: center;
+  opacity: .25;
+  color: black; /* 비활성 점 색상 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.slick-dots li.slick-active button:before {
+  opacity: .75;
+  color: #31BBE5; /* 활성 점 색상 */
+}
+
+/* slick arrows (좌우 화살표) 스타일 */
+.slick-prev, .slick-next {
+  font-size: 0;
+  line-height: 0;
+  position: absolute;
+  top: 50%;
+  display: block;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  -webkit-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  cursor: pointer;
+  color: transparent;
+  border: none;
+  outline: none;
+  background: transparent;
+  z-index: 10; /* 다른 요소 위에 오도록 */
+}
+
+.slick-prev:before, .slick-next:before {
+  font-family: 'slick';
+  font-size: 30px; /* 화살표 크기 */
+  line-height: 1;
+  opacity: .75;
+  color: white; /* 화살표 색상 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.slick-prev {
+  left: 25px; /* 왼쪽 여백 */
+}
+.slick-next {
+  right: 25px; /* 오른쪽 여백 */
 }

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useUserStore from "../store/userStore";
-import BannerForm from "../components/BannerForm";
 import api from "../api/axiosConfig";
-import './HomePage.css';
 import toast from "react-hot-toast";
-import Banner from "../../../server/models/Banner";
+import Slider from "react-slick"; // 👈 Slider 컴포넌트 import
+import "slick-carousel/slick/slick.css"; // 👈 slick 기본 CSS
+import "slick-carousel/slick/slick-theme.css"; // 👈 slick 테마 CSS
+import BannerForm from "../components/BannerForm";
+import './HomePage.css';
 
 function HomePage() {
   const [ productList, setProductList ] = useState([]); // 상품목록 기억 상자
@@ -16,11 +18,11 @@ function HomePage() {
   
   //--- 기능 정의 ---
   // 화면 랜더링(컴포넌트가 처음 랜더링 될떄 상품 목록을 불러옴
-  useEffect(() => {
-      const fetchData = async () => {
-      try {
-        // Promise.all은 하나라도 실패하면 전체가 실패합니다. 일부만 성공해도 진행하려면 Promise.allSettled를 사용.
-        const [ productsRes, bannersRes ] = await Promise.allSettled([
+  // fetchData를 useEffect 밖에서 정의하여 컴포넌트 전체에서 사용 가능하게 함
+  const fetchData = async () => {
+    try {
+      // Promise.all은 하나라도 실패하면 전체가 실패합니다. 일부만 성공해도 진행하려면 Promise.allSettled를 사용.
+      const [ productsRes, bannersRes ] = await Promise.allSettled([
         api.get('/products?limit=4'),
         api.get('/banners')
       ]);
@@ -33,7 +35,7 @@ function HomePage() {
         toast.error('상품 목록을 불러오지 못했습니다.')
       }
       if (bannersRes.status === 'fulfilled') {
-        setBannerList(bannersRes.value.data.banners);
+        setBannerList(bannersRes.value.data);
       } else {
         console.error('배너 목록 조회 실패', bannersRes.reason);
         setBannerList([]);
@@ -42,8 +44,34 @@ function HomePage() {
       console.error('데이터 로드 중 예외 발생', error);
     }
   };
+
+  useEffect(() => {
     fetchData();
   }, []);
+
+  // react-slick 설정
+    const sliderSettings = {
+        dots: true, // 하단 점 인디케이터
+        infinite: true, // 무한 루프
+        speed: 500, // 슬라이드 전환 속도
+        slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
+        slidesToScroll: 1, // 한 번에 스크롤될 슬라이드 개수
+        autoplay: true, // 자동 재생
+        autoplaySpeed: 3000, // 3초마다 자동 재생
+        arrows: true, // 좌우 화살표 (기본값)
+        // customPaging: i => ( // 커스텀 점 (선택 사항)
+        //     <div
+        //         style={{
+        //             width: "30px",
+        //             height: "30px",
+        //             border: "1px #f8f8f8 solid"
+        //         }}
+        //     >
+        //         {i + 1}
+        //     </div>
+        // )
+    };
+
 
   const handleBuy = async (productId) => {
     try{
@@ -62,17 +90,29 @@ function HomePage() {
   // --- 화면 그리기 ---
     return (
         <div className="homepage-container">
-            <section className="main-banner">
-              <img className="banner-image" src='/images/banner_20250822.png' alt="메인배너"></img>
-              <div banner="banner-indicators">
-                <p>&#9675; &#9675; &#9679; &#9675;</p>
-              </div>
-              {/* <div className="banner-placeholder"></div> */}
+            <section className="banner-area">
+              {bannerList.length > 0 ? (
+                <Slider {...sliderSettings}>
+                  {bannerList.map((banner) => (
+                    <div key={banner._id} className="banner-slide">
+                      <a href={banner.linkUrl || '#'} target="_blank" rel="noopener noreferrer">
+                        <img src={banner.imageUrl} alt="배너 이미지" className="banner-image"></img>
+                      </a> 
+                    </div>
+                  ))}
+                </Slider>
+              ) : (
+                <div className="no-banner">
+                  <p>현재 등록된 배너가 없습니다.</p>
+                </div>
+              )}
             </section>
+            { user?.role === 'admin' &&
             <section className="banner-form">
-              { user?.role === 'admin' && <BannerForm /> }
+               <BannerForm onBannerAdded={fetchData} /> 
               <div className="banner_fo"></div>
             </section>
+            }
             <section className="product-list-section">
               <div className="section-header">
                 <h2>판매상품</h2>
