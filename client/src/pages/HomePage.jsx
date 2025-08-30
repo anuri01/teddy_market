@@ -1,28 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useUserStore from "../store/userStore";
+import BannerForm from "../components/BannerForm";
 import api from "../api/axiosConfig";
 import './HomePage.css';
 import toast from "react-hot-toast";
+import Banner from "../../../server/models/Banner";
 
 function HomePage() {
   const [ productList, setProductList ] = useState([]); // 상품목록 기억 상자
+  const [ bannerList, setBannerList ] = useState([]);
   // const [ orderId, setOrderId ] = useState('');
-  const { isLoggedIn } = useUserStore(); // 로그인상태 확인을 위한 전여스토어 내 상태 호출
+  const { isLoggedIn, user } = useUserStore(); // 로그인상태 확인을 위한 전역스토어 내 상태 호출
   const navigate = useNavigate();
   
   //--- 기능 정의 ---
   // 화면 랜더링(컴포넌트가 처음 랜더링 될떄 상품 목록을 불러옴
   useEffect(() => {
-      const fetchProducts = async () => {
+      const fetchData = async () => {
       try {
-      const response = await api.get('/products?limit=4');
-      return setProductList(response.data.products);
+        // Promise.all은 하나라도 실패하면 전체가 실패합니다. 일부만 성공해도 진행하려면 Promise.allSettled를 사용.
+        const [ productsRes, bannersRes ] = await Promise.allSettled([
+        api.get('/products?limit=4'),
+        api.get('/banners')
+      ]);
+      console.log(bannersRes);
+      if (productsRes.status === 'fulfilled') {
+        setProductList(productsRes.value.data.products);
+      } else {
+        console.error('제품 목록 조회 실패', productsRes.reason);
+        setProductList([]);
+        toast.error('상품 목록을 불러오지 못했습니다.')
+      }
+      if (bannersRes.status === 'fulfilled') {
+        setBannerList(bannersRes.value.data.banners);
+      } else {
+        console.error('배너 목록 조회 실패', bannersRes.reason);
+        setBannerList([]);
+      }
     } catch(error) {
-      console.error('상품 목록을 가져올 수 없습니다.', error);
+      console.error('데이터 로드 중 예외 발생', error);
     }
   };
-    fetchProducts();
+    fetchData();
   }, []);
 
   const handleBuy = async (productId) => {
@@ -48,6 +68,10 @@ function HomePage() {
                 <p>&#9675; &#9675; &#9679; &#9675;</p>
               </div>
               {/* <div className="banner-placeholder"></div> */}
+            </section>
+            <section className="banner-form">
+              { user?.role === 'admin' && <BannerForm /> }
+              <div className="banner_fo"></div>
             </section>
             <section className="product-list-section">
               <div className="section-header">

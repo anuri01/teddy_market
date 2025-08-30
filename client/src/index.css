@@ -150,4 +150,14 @@ body {
   gap: 1rem;
 }
 
+.banner-form {
+  
+  /* border-bottom: 1px solid #959595; */
+  border-top: 1px solid #959595;
+}
 
+.banner_fo {
+  border-top: 1px solid #959595;
+  height: 20px;
+  margin-top: 10px;
+}
