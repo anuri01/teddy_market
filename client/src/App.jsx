@@ -12,7 +12,7 @@ import PurchasePage from './pages/PurchasePage';
 import PaymentPage from './pages/PaymentPage';
 import OrderCompletePage from './pages/OrderCompletePage';
 import ProfilePage from './pages/ProfilePage';
-import TestPage from './pages/TestPage';
+// import TestPage from './pages/TestPage';
 import ParnetPage from './pages/ParentPage';
 // import ProductEditor1 from './pages/ProductEditors1';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
@@ -52,7 +52,7 @@ function App() {
           <Route path='/payment/:orderId' element={<ProtectedRoute><PaymentPage /></ProtectedRoute>}></Route>
           <Route path='/order-complete/:orderId' element={<ProtectedRoute><OrderCompletePage /></ProtectedRoute>}></Route>
           <Route path='/productlist' element={<ProductListPage />}></Route>
-          <Route path='/test' element={<TestPage />}></Route>
+          {/* <Route path='/test' element={<TestPage />}></Route> */}
           <Route path='/parent' element={<ParentPage />}></Route>
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
