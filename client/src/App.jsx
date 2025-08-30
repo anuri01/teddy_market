@@ -13,7 +13,7 @@ import PaymentPage from './pages/PaymentPage';
 import OrderCompletePage from './pages/OrderCompletePage';
 import ProfilePage from './pages/ProfilePage';
 // import TestPage from './pages/TestPage';
-import ParnetPage from './pages/ParentPage';
+// import ParnetPage from './pages/ParentPage';
 // import ProductEditor1 from './pages/ProductEditors1';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
@@ -53,7 +53,7 @@ function App() {
           <Route path='/order-complete/:orderId' element={<ProtectedRoute><OrderCompletePage /></ProtectedRoute>}></Route>
           <Route path='/productlist' element={<ProductListPage />}></Route>
           {/* <Route path='/test' element={<TestPage />}></Route> */}
-          <Route path='/parent' element={<ParentPage />}></Route>
+          {/* <Route path='/parent' element={<ParentPage />}></Route> */}
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
           <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
