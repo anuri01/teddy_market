@@ -106,7 +106,11 @@
 }
 
 .empty-message {
+  font-size: 1.3rem;
   text-align: center;
   padding: 3rem 0;
   color: #868e96;
+  border: 1px solid #868e96;
+  border-radius: 8px;
+  box-shadow: 3px 5px 5px 2px #8ec6d9;
 }

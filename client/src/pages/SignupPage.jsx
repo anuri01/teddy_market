@@ -100,7 +100,7 @@ function SignupPage() {
                 <input 
                 className="form-input"
                 type="password"
-                placeholder="비밀번호를 8가지 이상 입력하세요."
+                placeholder="비밀번호를 8자리 이상 입력하세요."
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 />

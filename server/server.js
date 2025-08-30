@@ -606,6 +606,19 @@ app.get('/api/users/my-products', authMiddleware, async (req, res) => {
     }
 });
 
+// 사용자 정보 조회(내정보 페이지용)
+app.get('/api/users/my-profile', authMiddleware, async (req, res) => {
+    try {
+        const profileRes = await User.findById(req.user.id).select('-password');
+        if(!profileRes) {
+            return res.status(404).json({message:'사용자 정보가 없습니다.'});
+        }
+        res.json(profileRes);
+    } catch(error) {
+        res.status(500).json({message: '서버 오류 발생'});
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
 });

@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         // required: false 소셜 로그인을 쓰기 위해 제외
+        select: false,
 
     },
     email: {
