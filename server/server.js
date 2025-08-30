@@ -619,6 +619,44 @@ app.get('/api/users/my-profile', authMiddleware, async (req, res) => {
     }
 });
 
+// 사용자 정보 수정(내정보 페이지용)
+app.put('/api/users/my-profile', authMiddleware, async (req, res) => {
+    try {
+        const { email, phoneNumber, currentPassword, newPassword } = req.body;
+        // .select('+password')를 사용해 password 필드를 명시적으로 가져옵니다. 
+        const myProfile = await User.findById(req.user.id).select(+password);
+         if (!myProfile) {
+        return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        // 이메일과 전화번호 업데이트
+        if (email) myProfile.email = email;
+        if (phoneNumber) myProfile.phoneNumber = phoneNumber
+
+        if(newPassword) {
+            if(!myProfile.password) {
+                return res.status(400).json({message:'소셜 로그인 사용자는 비밀번호 변경이 불가능합니다.'});
+            }
+            if(!currentPassword) {
+                return res.status(400).json({message:'현재 비밀번호를 입력해 주세요.'});
+            }
+            const isMatch = await bcrypt.compare(currentPassword, myProfile.password);
+            if(!isMatch) {
+                return res.status(400).json({message:'비밀번호가 일치하지 않습니다.'});
+            } else if(currentPassword === newPassword) {
+                return res.status(400).json({message:'현재 비밀번호과 동일한 비밀번호는 사용할수 없습니다.'});
+            } else {
+                myProfile.password = newPassword;
+            }
+        }
+        await myProfile.save();
+        res.status(200).json({message: '정보 수정이 완료되었습니다. '})
+ 
+    } catch(error) {
+        res.status(500).json({message: '서버 오류 발생'});
+    }
+})
+
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
 });
