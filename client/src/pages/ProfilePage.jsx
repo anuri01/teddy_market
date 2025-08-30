@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 // import useUserStore from "../store/userStore";
 import api from "../api/axiosConfig";
@@ -12,10 +12,12 @@ function ProfilePage() {
     const [ myProfile, setMyProfile] = useState([]);
     const [ activeTab, setActiveTab ] = useState('profile');
     const [ isLoading, setIsLoading ] = useState(true);
-    const [ phoneNumber, setPhoneNumber ] = useState(myProfile.phoneNumber);
-    const [ email, setEmail ] = useState(myProfile.email);
-    const [ currentPassword, setCurrentPassword ] = ('')
-    const [ newPassword, setNewPassword ] = ('')
+    const [ phoneNumber, setPhoneNumber ] = useState('');
+    const [ email, setEmail ] = useState('');
+    const [ currentPassword, setCurrentPassword ] = useState('');
+    const [ newPassword, setNewPassword ] = useState('');
+    const [ confirmPassword, setConfirmPassword ] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,16 +42,19 @@ function ProfilePage() {
         fetchData();
     }, []);
 
-    console.log(myProfile);
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await api.put('/users/my-profile', { phoneNumber, email, currentPassword, newPassword });
             toast.success('사용자 정보 변경이 완료됐습니다.');
+            // 성공 후 비밀번호 필드 초기화
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+            // navigate('/profile');
         } catch (error) {
-            toast.error('정보변경에 실패했습니다.')
-            console.error('사용자 정보 변경에 실패했습니다.', error)
+            console.error('사용자 정보 변경에 실패했습니다.')
+            toast.error(error.response?.data?.message || '알수 없는 오류가 발생했습니다.');
         }
     }
 
@@ -59,6 +64,12 @@ function ProfilePage() {
         <div className="spinner"></div>
     </div>;
     }
+
+    // myProfile이 아직 없을 경우를 대비 (데이터 로드 실패 등)
+    if (!myProfile) {
+        return <div className="loading-message">사용자 정보를 불러올 수 없습니다.</div>
+    }
+
     return (
         
         <div className="profile-page-container">
@@ -99,24 +110,18 @@ function ProfilePage() {
                         <form onSubmit={handleSubmit}>
                 <p className="form-section-title">아이디</p>
                 <input 
+                readOnly
                 type="text" 
                 className="form-input"
                 placeholder="아이디가 표시됩니다."
-                value={myProfile ? myProfile.username : ''}
+                value={myProfile?.username || ''}
                 // onChange={(e) => setUsername(e.target.value)}
                 />
-                {/* <input 
-                className="form-input"
-                type="password"
-                placeholder="비밀번호를 8가지 이상 입력하세요."
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                /> */}
-
+                
                 <p className="form-section-title">이메일</p>
                 <input 
                 className="form-input"
-                type="text"
+                type="email"
                 placeholder="이메일 주소가 없습니다."
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -129,7 +134,34 @@ function ProfilePage() {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 />
-                
+                { !myProfile.naverId && !myProfile.kakaoId ? (
+                <>
+                <p className="form-section-title">비밀번호 변경</p>
+                <input 
+                className="form-input"
+                type="password"
+                placeholder="기존 비밀번호를 입력하세요."
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+                <input 
+                className="form-input"
+                type="password"
+                placeholder="신규 비밀번호를 8자리 이상 입력하세요."
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <input 
+                className="form-input"
+                type="password"
+                placeholder="신규 비밀번호를 다시 입력하세요."
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                </>
+                ) : (<div></div>)
+                }
+
                 <div className="auth-button-group">
                 <button type="submit" className="button button-primary">정보수정</button>
                 </div>

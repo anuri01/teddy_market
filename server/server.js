@@ -630,8 +630,8 @@ app.put('/api/users/my-profile', authMiddleware, async (req, res) => {
         }
 
         // 이메일과 전화번호 업데이트
-        if (email) myProfile.email = email;
-        if (phoneNumber) myProfile.phoneNumber = phoneNumber
+        if (email !== undefined) myProfile.email = email;
+        if (phoneNumber !== undefined) myProfile.phoneNumber = phoneNumber;
 
         if(newPassword) {
             if(!myProfile.password) {
