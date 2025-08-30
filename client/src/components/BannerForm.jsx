@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import api from "../api/axiosConfig";
 
-function BannerForm() {
+function BannerForm({ onBannerAdded }) {
     const [ bannerImageFile, setBannerImageFile ] = useState(null);
     const [ linkUrl, setLinkUrl ] = useState('')
     const [ isLoading, setIsLoading ] = useState(false); // 배너 등록중 버튼 중복 눌림 방지역할
