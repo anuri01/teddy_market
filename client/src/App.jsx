@@ -12,18 +12,18 @@ import PurchasePage from './pages/PurchasePage';
 import PaymentPage from './pages/PaymentPage';
 import OrderCompletePage from './pages/OrderCompletePage';
 import ProfilePage from './pages/ProfilePage';
-// import TestPage from './pages/TestPage';
-// import ParnetPage from './pages/ParentPage';
-// import ProductEditor1 from './pages/ProductEditors1';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
-// import logoFooter from '../public/images/logo_footer.png';
 import './App.css'
 import './index.css'
-import ParentPage from './pages/ParentPage';
+// import logoFooter from '../public/images/logo_footer.png';
+// import TestPage from './pages/TestPage';
+// import ParnetPage from './pages/ParentPage';
+// import ProductEditor1 from './pages/ProductEditors1';
+// import ParentPage from './pages/ParentPage';
 
 
 
@@ -52,11 +52,11 @@ function App() {
           <Route path='/payment/:orderId' element={<ProtectedRoute><PaymentPage /></ProtectedRoute>}></Route>
           <Route path='/order-complete/:orderId' element={<ProtectedRoute><OrderCompletePage /></ProtectedRoute>}></Route>
           <Route path='/productlist' element={<ProductListPage />}></Route>
-          {/* <Route path='/test' element={<TestPage />}></Route> */}
-          {/* <Route path='/parent' element={<ParentPage />}></Route> */}
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
           <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
+          {/* <Route path='/test' element={<TestPage />}></Route> */}
+          {/* <Route path='/parent' element={<ParentPage />}></Route> */}
         </Routes>
       </main>
       <Footer />
