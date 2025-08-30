@@ -216,7 +216,7 @@ app.post('/api/users/login', async ( req, res) => {
     try {
         const { username, password } = req.body;
         // 혹시 에러가 날 경우 username: username를 username로 수정해 볼 것 
-        const user = await User.findOne({ username: username });
+        const user = await User.findOne({ username: username }).select('+password');
 
         if (!user) {
             return res.status(400).json({ message: '로그인 정보를 확인하세요.'});
@@ -624,7 +624,7 @@ app.put('/api/users/my-profile', authMiddleware, async (req, res) => {
     try {
         const { email, phoneNumber, currentPassword, newPassword } = req.body;
         // .select('+password')를 사용해 password 필드를 명시적으로 가져옵니다. 
-        const myProfile = await User.findById(req.user.id).select(+password);
+        const myProfile = await User.findById(req.user.id).select('+password');
          if (!myProfile) {
         return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
         }

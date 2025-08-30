@@ -12,6 +12,10 @@ function ProfilePage() {
     const [ myProfile, setMyProfile] = useState([]);
     const [ activeTab, setActiveTab ] = useState('profile');
     const [ isLoading, setIsLoading ] = useState(true);
+    const [ phoneNumber, setPhoneNumber ] = useState(myProfile.phoneNumber);
+    const [ email, setEmail ] = useState(myProfile.email);
+    const [ currentPassword, setCurrentPassword ] = ('')
+    const [ newPassword, setNewPassword ] = ('')
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,9 +42,15 @@ function ProfilePage() {
 
     console.log(myProfile);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        toast('정보 수정 기능은 준비중입니다.');
+        try {
+            await api.put('/users/my-profile', { phoneNumber, email, currentPassword, newPassword });
+            toast.success('사용자 정보 변경이 완료됐습니다.');
+        } catch (error) {
+            toast.error('정보변경에 실패했습니다.')
+            console.error('사용자 정보 변경에 실패했습니다.', error)
+        }
     }
 
     if(isLoading) {
@@ -89,7 +99,6 @@ function ProfilePage() {
                         <form onSubmit={handleSubmit}>
                 <p className="form-section-title">아이디</p>
                 <input 
-                readOnly
                 type="text" 
                 className="form-input"
                 placeholder="아이디가 표시됩니다."
@@ -106,21 +115,19 @@ function ProfilePage() {
 
                 <p className="form-section-title">이메일</p>
                 <input 
-                readOnly
                 className="form-input"
                 type="text"
                 placeholder="이메일 주소가 없습니다."
-                value={myProfile ? myProfile.email : ''}
-                // onChange={(e) => setEmail(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 />
                 <p className="form-section-title">휴대폰번호</p>
                 <input 
-                readOnly
                 className="form-input"
                 type="text"
                 placeholder="전화번호가 없습니다."
-                value={myProfile.phoneNumber}
-                // onChange={(e) => setPhoneNumber(e.target.value)}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 />
                 
                 <div className="auth-button-group">
