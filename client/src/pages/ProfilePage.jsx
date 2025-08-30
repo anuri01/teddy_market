@@ -32,6 +32,8 @@ function ProfilePage() {
                 setMyProducts(productsRes.data);
                 setMyOrders(ordersRes.data);
                 setMyProfile(profileRes.data);
+                setEmail(profileRes.data.email);
+                setPhoneNumber(profileRes.data.phoneNumber);
             } catch(error) {
                 toast.error('내 정보를 불러오는 데 실패했습니다.');
                 console.error(error);
