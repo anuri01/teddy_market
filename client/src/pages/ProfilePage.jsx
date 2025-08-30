@@ -17,7 +17,7 @@ function ProfilePage() {
     const [ currentPassword, setCurrentPassword ] = useState('');
     const [ newPassword, setNewPassword ] = useState('');
     const [ confirmPassword, setConfirmPassword ] = useState('');
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {

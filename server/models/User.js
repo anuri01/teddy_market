@@ -15,6 +15,12 @@ const userSchema = new mongoose.Schema({
         select: false,
 
     },
+    role: { 
+        type: String,
+        enum: ['user', 'admin'], // 역할은 둘중 하나여야 함. 
+        default:'user',
+    },
+
     email: {
         type: String,
         trim: true,

@@ -14,6 +14,7 @@ import { Strategy as KakaoStrategy } from 'passport-kakao'; // Kakao passport �
 import User from './models/User.js'; // User db스키마 임포트
 import Product from './models/Product.js'; // Product db스키마 임포트
 import Orders from './models/Orders.js'; // Orders db스키마 임포트
+import Banner from './models/Banner.js'; // 
 import upload from './upload.js';
 import { s3 } from './upload.js'; // 👈 이 줄 추가
 import { memoryStorage } from 'multer';
@@ -50,13 +51,24 @@ const authMiddleware = ( req, res, next ) => {
         //     return res.status(401).json({ message: '토큰이 유효하지 안흡니다.'});
         // }
 
-        req.user = { id: decoded.id, username: decoded.username}; // req.user에 디코드된 id와 username을 다시 담는다. 
+        req.user = { id: decoded.id, username: decoded.username, role: decoded.role}; // req.user에 디코드된 id와 username을 다시 담는다. 
         return next(); // 인증이 완료되면 다음 과정을 실행하도록 next()를 리턴
     } catch (errro) {
         res.status(500).json({ message: '서버 오류가 발생했습니다. 인증'});
     }
 };
-
+// 관리자 인증 미들웨어
+const adminMiddleware = ( req, res, next ) => {
+    try {
+        if (req.user && req.user.role === 'admin') {
+            next(); 
+        } else {
+            return res.status(403).json({message: '관리 권한이 없는 사용자입니다.'})
+        }
+    } catch (error) {
+        res.status(500).json({message: '서버 오류 발생'});
+    }
+}
 // Passport 설정(네이버 Strategy 활용)
 // passport.use()는 passport에 새로운 로그인 방식을 등록하는 '약속된 함수'입니다.
 passport.use(new NaverStrategy({
@@ -232,7 +244,7 @@ app.post('/api/users/login', async ( req, res) => {
         // 2. jwt.sign 함수는  jsonwebtoken 라이브러리의 '약속된 함수'입니다. 이를 통해 토큰 발행
         const token = jwt.sign(
             // 첫번째 인자 토큰에 같이 담을 정보
-            { id: user._id, username: user.username },
+            { id: user._id, username: user.username, role: user.role },
             // 두번째 인자 토큰 생성을 위함 비밀키 
             process.env.JWT_SECRET,
             // 세번째 인자 오셥으로 토큰 유효시간을 보냄
@@ -656,6 +668,67 @@ app.put('/api/users/my-profile', authMiddleware, async (req, res) => {
         res.status(500).json({message: '서버 오류 발생'});
     }
 })
+
+// 배너 등록
+app.post('/api/banners', authMiddleware, adminMiddleware, upload.single('bannerImage'), async(req, res) => {
+    try {
+        const { linkUrl } = req.body;
+        const image = req.file;
+
+        if(!image) {
+            return res.status(400).json({message:'배너 이미지는 필수 입니다.'});
+        }
+        const newBanner = new Banner({
+            imageUrl: image.location,
+            linkUrl: linkUrl || '',
+            creator: req.user.id,
+        })
+        await newBanner.save();
+        res.status(201).json(newBanner);
+
+        } catch(error) {
+            res.status(500).json({message:'서버 오류 발생'});
+        }
+})
+
+//배너 목록 조회
+app.get('/api/banners', async (req, res) => {
+    try {
+        const banners = await Banner.find({}).sort({createdAt: -1 });
+        if(!banners) {
+            return res.status(404).json({message: '등록된 배너가 없습니다.'});
+        } 
+        res.json(banners);
+    } catch (error) {
+        console.error('배너 조회 중 에러 발생', error);
+        res.status(500).json({message: '서버 오류 발생'});
+        }
+
+}) 
+
+// 배너 삭제(관리자 전용)
+app.delete('/api/banners/:bannerId', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const { bannerId } = req.params;
+        const banner = await Banner.findById(bannerId);
+        if(!banner) {
+            res.status(404).json({message: '삭제할 배너를 찾을 수 없습니다.'});
+        }
+
+        const fileKey = decodeURIComponent(new URL(banner.imageUrl).pathname.substring(1));
+        const command = new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: fileKey,
+        });
+        await s3.send(command);
+        
+        await Banner.findByIdAndDelete(bannerId);
+        res.json({message:'배너가 성공적으로 삭제되었습니다.'});
+    } catch(error) {
+        res.status(500).json({message: '서버 오류 발생'});
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
