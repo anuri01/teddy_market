@@ -12,6 +12,7 @@ import './HomePage.css';
 function HomePage() {
   const [ productList, setProductList ] = useState([]); // 상품목록 기억 상자
   const [ bannerList, setBannerList ] = useState([]);
+  const [ isLoading, setIsLoading ]= useState(true);
   // const [ orderId, setOrderId ] = useState('');
   const { isLoggedIn, user } = useUserStore(); // 로그인상태 확인을 위한 전역스토어 내 상태 호출
   const navigate = useNavigate();
@@ -41,23 +42,29 @@ function HomePage() {
       }
     } catch(error) {
       console.error('데이터 로드 중 예외 발생', error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchData();
   }, []);
 
   // react-slick 설정
     const sliderSettings = {
+        centerMode: true,
+        centerPadding: '30px',
         dots: true, // 하단 점 인디케이터
         infinite: true, // 무한 루프
         speed: 500, // 슬라이드 전환 속도
         slidesToShow: 1, // 한 번에 보여줄 슬라이드 개수
         slidesToScroll: 1, // 한 번에 스크롤될 슬라이드 개수
         autoplay: true, // 자동 재생
-        autoplaySpeed: 3000, // 3초마다 자동 재생
+        autoplaySpeed: 2000, // 3초마다 자동 재생
         arrows: true, // 좌우 화살표 (기본값)
+        // fade: true,
         // customPaging: i => ( // 커스텀 점 (선택 사항)
         //     <div
         //         style={{
@@ -86,6 +93,12 @@ function HomePage() {
     }
   };
 
+if(isLoading) {
+  return <div className="loading-message">
+    <p>페이지를 불러오는 중입니다. 잠시만 기다리세요.</p>
+  </div>
+}
+
   // --- 화면 그리기 ---
     return (
         <div className="homepage-container">
@@ -101,7 +114,7 @@ function HomePage() {
                   ))}
                 </Slider>
               ) : (
-                <div className="no-banner">
+                <div className="no-banners">
                   <p>현재 등록된 배너가 없습니다.</p>
                 </div>
               )}
@@ -109,7 +122,6 @@ function HomePage() {
             { user?.role === 'admin' &&
             <section className="banner-form">
                <BannerForm onBannerAdded={fetchData} /> 
-              <div className="banner_fo"></div>
             </section>
             }
             <section className="product-list-section">

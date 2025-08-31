@@ -42,7 +42,6 @@ function SearchPage() {
     
     // 2. 받은 오더id를 가지고 구매 페이지로 이동한다. 
     navigate(`/purchase/${orderId}`);
-    // toast('상품구매 기능은 추후 지원됩니다.');
     } catch(error) {
       console.error('구매페이지 이동에 실패했습니다.');
     }

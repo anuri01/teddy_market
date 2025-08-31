@@ -735,7 +735,7 @@ app.get('/api/search', async (req, res) => {
         const { keyword } = req.query;
         if(!keyword) {
             return res.status(400).json({message: '검색어를 입력해 주세요.'});
-        } else if(keyword.length > 100) {
+        } else if(keyword.length > 30) {
             throw new Error('검색어가 너무 깁니다.');
         }
         // 특수문자 리플레이스 함수 '$&' 조건에 맞는 문자 그래도 치환한다는 의미 $* 식으로 여러 옵션이 있음. 특수문자 앞에 \를 붙여서 치환함
