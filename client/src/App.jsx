@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import useUserStore from './store/userStore';
 import Header from './components/Header'; // 헤더 컴포넌트 임포트
@@ -12,11 +12,15 @@ import PurchasePage from './pages/PurchasePage';
 import PaymentPage from './pages/PaymentPage';
 import OrderCompletePage from './pages/OrderCompletePage';
 import ProfilePage from './pages/ProfilePage';
+import SearchPage from './pages/SearchPage';
+import Footer from './components/Footer';
+import ChatButton from './components/ChatButton';
+import ChatList from './components/ChatList';
+import ChatRoom from './components/ChatRoom';
+import socket from './socket'; // 소켓 인스턴스 import
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import ProtectedRoute from './components/ProtectedRoute';
-import SearchPage from './pages/SearchPage';
-import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 import './App.css'
 import './index.css'
@@ -29,8 +33,28 @@ import './index.css'
 
 
 function App() {
-  const { isLoggedIn } = useUserStore();
+  const { isLoggedIn, user } = useUserStore();
   // const navigate = useNavigate(); // 👈 페이지 이동을 위한 navigate 함수 준비
+  
+  // 채팅 관련 상태 추가
+  const [ isChatListOpen, setIsChatListOpen ] = useState(false);
+  const [ currentChatRoom, setCurrentChatRoom ] = useState(null); // 채팅방 객체 저장
+
+  useEffect(() => {
+    if(isLoggedIn) {
+      socket.connect();
+    }
+
+   // 컴포넌트 언마운트 시 해제
+    return() => {
+      socket.disconnect();
+    }
+  }, [isLoggedIn]);
+
+  const openChatRoom = (room) => {
+    setCurrentChatRoom(room);
+    setIsChatListOpen(false); // 채팅방 열면 목록 닫기
+  };
 
   return (
     <div className='app-container'>
@@ -45,8 +69,8 @@ function App() {
           <Route path='/' element={<HomePage />}></Route>
           <Route path='/login' element={ isLoggedIn ? <Navigate to="/" /> : <LoginPage />}></Route>
           <Route path='/signup' element={ isLoggedIn ? <Navigate to="/" /> : <SignupPage />}></Route>
-          <Route path='/products/:productId' element={ <ProductDetailPage />}></Route>
-          {/* 👇 콜백 경로 추가 */}
+           {/* 👇 ProductDetailPage에 채팅방 여는 함수를 props로 전달 */}
+          <Route path='/products/:productId' element={ <ProductDetailPage onOpenChat={openChatRoom} />}></Route>
           <Route path='/write' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
           <Route path='/edit/:productId' element={ <ProtectedRoute><ProductEditor /></ProtectedRoute>}></Route>
           <Route path='/purchase/:orderId' element={<ProtectedRoute><PurchasePage /></ProtectedRoute>}></Route>
@@ -55,6 +79,7 @@ function App() {
           <Route path='/productlist' element={<ProductListPage />}></Route>
           <Route path='/search' element={<SearchPage />}></Route>
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
+          {/* 👇 콜백 경로 추가 */}
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
           <Route path='/auth/kakao/callback' element={<KakaoCallback />} />
           {/* <Route path='/test' element={<TestPage />}></Route> */}
@@ -62,6 +87,15 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      {/* --- 👇 채팅 관련 UI 추가 --- */}
+            {isLoggedIn && (
+                <>
+                    <ChatButton onToggleChatList={() => setIsChatListOpen(!isChatListOpen)} />
+                    {isChatListOpen && <ChatList onClose={() => setIsChatListOpen(false)} onRoomSelect={openChatRoom} />}
+                    {currentChatRoom && <ChatRoom room={currentChatRoom} onClose={() => setCurrentChatRoom(null)} />}
+                </>
+            )}
+
     </div>
   )
 }

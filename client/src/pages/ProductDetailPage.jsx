@@ -5,8 +5,8 @@ import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
 import './ProductDetailPage.css';
 
-
-function ProductDetailPage() {
+// App.jsx로부터 채팅방을 여는 함수 onOpenChat을 props로 받음
+function ProductDetailPage({ onOpenChat }) {
     const [ product, setProduct ] = useState(null); // 상품 데이터 기억상자
     const [ isLoading, setIsLoading ] = useState(true); // 로딩상태 기억상자
 
@@ -46,8 +46,27 @@ function ProductDetailPage() {
         } catch(error) {
             toast.error('삭제에 실패했어요');
         }
-
     }
+
+     // --- 👇 '문의하기' 버튼 핸들러 추가 ---
+    const handleChatInitiate = async () => {
+        if (!isLoggedIn) {
+            toast.error("로그인이 필요한 기능입니다.");
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const response = await api.post('/chat/initiate', {
+                productId: product._id,
+                sellerId: product.seller._id,
+            });
+            // App.jsx로부터 받은 함수를 호출하여 채팅방을 연다.
+            onOpenChat(response.data);
+        } catch (error) {
+            toast.error("채팅방을 시작하는데 실패했습니다.");
+        }
+    };
     // -- 화면 ui 그리기 
     // 로딩중 조기반환
     if(isLoading) {
@@ -97,7 +116,8 @@ function ProductDetailPage() {
             </div>
             ) : (
                 <div className="product-actions">
-                    <Link to="/" className="button button-secondary">메인으로</Link>
+                    <button onClick={handleChatInitiate} className="button button-secondary">문의하기</button>
+                    {/* <Link to="/" className="button button-secondary">메인으로</Link> */}
                     <Link to={`/buy/${productId}`} className="button button-primary">상품구매</Link>
                 </div>
             )
