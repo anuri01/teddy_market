@@ -9,7 +9,7 @@
     gap: 0.2rem;
 }
 .banner-image {
-   width: 100%;
+  width: 98%;
   height: 200px; /* 고정 높이 설정 (원하는대로 조절) */
   object-fit: cover; /* 이미지가 잘리지 않고 채워지도록 */
   border-radius: 8px; /* 이미지 자체에 둥근 모서리 */

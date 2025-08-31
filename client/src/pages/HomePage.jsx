@@ -55,7 +55,7 @@ function HomePage() {
   // react-slick 설정
     const sliderSettings = {
         centerMode: true,
-        centerPadding: '30px',
+        centerPadding: '20px',
         dots: true, // 하단 점 인디케이터
         infinite: true, // 무한 루프
         speed: 500, // 슬라이드 전환 속도
@@ -63,7 +63,7 @@ function HomePage() {
         slidesToScroll: 1, // 한 번에 스크롤될 슬라이드 개수
         autoplay: true, // 자동 재생
         autoplaySpeed: 2000, // 3초마다 자동 재생
-        arrows: true, // 좌우 화살표 (기본값)
+        arrows: false, // 좌우 화살표 (기본값)
         // fade: true,
         // customPaging: i => ( // 커스텀 점 (선택 사항)
         //     <div
