@@ -2,12 +2,12 @@
 // ES Module 사용(리액트와 맞춤)
 import 'dotenv/config'; // dotenv 설정 방식이 변경됨
 import express from 'express';
+import http from 'http'; // http 모듈 임포트(소켓io 사용을 위해 필요). nodejs에서 기본제공하는 http 모듈임
+import { Server } from 'socket.io'; // (소켓io 서버 임포트)
 import mongoose from 'mongoose';
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-// import http from 'http'; // nodejs에서 기본제공하는 http 모듈임
-// import { Server } from 'socket.io';
 import passport from 'passport';
 import { Strategy as NaverStrategy } from 'passport-naver'; // Naver passport 임포트
 import { Strategy as KakaoStrategy } from 'passport-kakao'; // Kakao passport 임포트
@@ -15,6 +15,8 @@ import User from './models/User.js'; // User db스키마 임포트
 import Product from './models/Product.js'; // Product db스키마 임포트
 import Orders from './models/Orders.js'; // Orders db스키마 임포트
 import Banner from './models/Banner.js'; // 
+import ChatRoom from './models/ChatRoom.js';
+import Message from './models/Message.js';
 import upload from './upload.js';
 import { s3 } from './upload.js'; // 👈 이 줄 추가
 import { memoryStorage } from 'multer';
@@ -24,6 +26,14 @@ import { populate } from 'dotenv';
 
 //express 앱 설정
 const app = express();
+const server = http.createServer(app); // Express 앱을 가지고 http 서버 생성
+const io = new Server(server, { // http 서버에 socket.io 연결
+    cors: { // cross orgin 설정. 프론트 사이트와 통신을 위해 설정.
+        origin: process.env.FRONTEND_URL || "http://localhost:5173",
+        methods: ["GET", "POST"]
+    }
+
+})
 const PORT = process.env.PORT || 4600;
 app.use(cors());
 app.use(express.json());
@@ -35,6 +45,8 @@ mongoose.connect(process.env.MONGODB_URI)
     .catch(err => console.error('디비 연결 실패', err));
 
 // API라우트 영역 
+
+
 
 // 인증 미들웨어 - 로그인된 사용자 인증이 필요한 라우트에 사용. 클라이언트가 보낸 헤더 정보에서 토큰을 추출해 인증함
 const authMiddleware = ( req, res, next ) => {
@@ -69,6 +81,56 @@ const adminMiddleware = ( req, res, next ) => {
         res.status(500).json({message: '서버 오류 발생'});
     }
 }
+
+// --- 👇 [3. Socket.IO 로직 추가] ---
+io.on('connection', (socket) => {
+    console.log(`Socket connected: ${socket.id}`);
+    
+    // 사용자가 특정 채팅방에 들어오는 이벤트 
+    socket.on('joinRoom', (roomId) => {
+        socket.join(roomId);
+        console.log(`Socket ${socket.id} joined room ${roomId}`);
+    });
+
+    //사용자가 메시지를 보내는 이벤트
+    socket.on('sendMessage', async({ roomId, senderId, content }) => {
+         try {
+             // ✅ 입력값 검증 추가
+            if (!roomId || !senderId || !content.trim()) {
+            socket.emit('error', { message: '필수 정보가 누락되었습니다.' });
+            return;
+            }
+            //메시지를 db에 저장
+            const newMessage = new Message({
+                chatRoom: roomId,
+                sender: senderId,
+                content : content,
+            })
+            await newMessage.save();
+
+            // populate를 통해 sender 정보를 포함해 클라이언트에게 전송
+            const populatedMessage = await Message.findById(newMessage._id).populate('sender', 'username');
+
+            // 해당 채팅방에 있는 모든 클라이언트에게 메시지 전송
+            io.to(roomId).emit('receiveMessage', populatedMessage);
+
+             // 채팅방의 updatedAt을 갱신하여 목록 정렬에 사용
+            await ChatRoom.findByIdAndUpdate(roomId, { updatedAt: Date.now() });
+
+
+         } catch(error) {
+              console.error('메시지 전송 오류:', error);
+         }
+    });
+    socket.on('disconnect', () => {
+        console.log(`Socket disconnected: ${socket.id}`);
+    });
+});
+
+
+
+
+
 // Passport 설정(네이버 Strategy 활용)
 // passport.use()는 passport에 새로운 로그인 방식을 등록하는 '약속된 함수'입니다.
 passport.use(new NaverStrategy({
@@ -415,6 +477,7 @@ app.get('/api/products/:id', async( req, res ) => {
     }
 });
 
+// 상품목록 라우트
 app.get('/api/products', async( req, res ) => {
     try {
         // 페이지네이션 추가 : URL 쿼리에서 page와 limit 값을 가져옵니다. 없으면 기본값을 사용합니다.
@@ -669,6 +732,55 @@ app.put('/api/users/my-profile', authMiddleware, async (req, res) => {
     }
 })
 
+
+// --- 👇 [2. 채팅 관련 API 라우트 추가] ---
+// 채팅 시작 또는 기존 채팅방 가져오기
+app.get('/api/chat/initate', authMiddleware, async(req, res) => {
+    try {
+        const { productId, sellerId } = req.body;
+        const buyerId = req.user.id;
+
+        //기존 채팅방이 있는지 확인
+        let ChatRoom = await ChatRoom.findOne({product: productId, seller: sellerId, buyer: buyerId});
+        
+        if (!ChatRoom) {
+            ChatRoom = new ChatRoom({
+                product: productId,
+                seller: sellerId,
+                buyer: buyerId,
+                participants: [buyerId, sellerId],
+            });
+            await ChatRoom.save();
+        }
+        res.status(200).json(ChatRoom);
+    } catch(error) {
+        res.status(500).json({message: '채티방 시작 중 오류 발생'});
+    }
+});
+
+//내 채팅방 목록가져오기
+app.get('/api/chat/rooms', authMiddleware, async(req,res) => {
+    try {
+        const rooms = await ChatRoom.find({ participants: req.user.id }).populate('seller', 'usernaem').populate('buyer', 'username').populate('product', 'mainImageUrl title').sort({createdAt: -1}); // 참가자에서 로그인한 사용자 id로 검색하고 채팅방 ui구성에 필요한 내용을 populate로 가져옴.
+        res.json(rooms);
+    } catch(error) {
+        res.status(500).json({message: '채팅방 목록 조회 중 에러 발생'});
+
+    }
+})
+
+//특정 채팅방 메시지 가져오기
+app.get('/api/chat/rooms/:roomId/message', authMiddleware, async(req, res) => {
+ try {
+    const { roomId } = req.params;
+    const message = await Message.find({chatRoom: roomId}).populate('sender', 'username').sort({createdAt: 'asc'});
+    res.json(message)
+
+ } catch(error) {
+        res.status(500).json({message: '메시지 조회 중 에러 발생'});
+ } 
+});
+
 // 배너 등록
 app.post('/api/banners', authMiddleware, adminMiddleware, upload.single('bannerImage'), async(req, res) => {
     try {
@@ -773,6 +885,6 @@ app.get('/api/search', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => { // app -> server 로 수정
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
 });

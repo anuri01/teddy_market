@@ -95,7 +95,8 @@ function HomePage() {
 
 if(isLoading) {
   return <div className="loading-message">
-    <p>페이지를 불러오는 중입니다. 잠시만 기다리세요.</p>
+    <p>페이지를 불러오는 중입니다.</p>
+    <p>(최대 1~2분 소요)</p>
   </div>
 }
 
