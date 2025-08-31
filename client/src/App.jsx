@@ -15,6 +15,7 @@ import ProfilePage from './pages/ProfilePage';
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import ProtectedRoute from './components/ProtectedRoute';
+import SearchPage from './pages/SearchPage';
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 import './App.css'
@@ -52,6 +53,7 @@ function App() {
           <Route path='/payment/:orderId' element={<ProtectedRoute><PaymentPage /></ProtectedRoute>}></Route>
           <Route path='/order-complete/:orderId' element={<ProtectedRoute><OrderCompletePage /></ProtectedRoute>}></Route>
           <Route path='/productlist' element={<ProductListPage />}></Route>
+          <Route path='/search' element={<SearchPage />}></Route>
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
           <Route path='/auth/naver/callback' element={<NaverCallback />} />
           <Route path='/auth/kakao/callback' element={<KakaoCallback />} />

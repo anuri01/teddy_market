@@ -26,7 +26,6 @@ function HomePage() {
         api.get('/products?limit=4'),
         api.get('/banners')
       ]);
-      console.log(bannersRes);
       if (productsRes.status === 'fulfilled') {
         setProductList(productsRes.value.data.products);
       } else {

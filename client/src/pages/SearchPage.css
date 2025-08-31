@@ -1,0 +1,49 @@
+.productlist-container {
+  width: 100%;
+
+}
+
+.prepare-message {
+    width: 100%;
+    text-align: center;
+    padding: 3rem 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* 선택사항: 카드 느낌 */
+    border-radius: 8px; /* 선택사항: 모서리 둥글게 */
+}
+
+.prepare-message h1{
+    font-size: 1.5rem;
+}
+
+.all-product-list-title {
+    font-size: 2rem;
+}
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 1rem;
+}
+
+.load-more-button {
+  width: auto; /* 너비를 내용에 맞게 */
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  background-color: white;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.load-more-button:hover {
+  background-color: #f8f9fa;
+}
+
+.no-more-products {
+  width: auto; /* 너비를 내용에 맞게 */
+  padding: 0.8rem 2rem;
+  background-color: white;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}

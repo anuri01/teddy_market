@@ -729,6 +729,49 @@ app.delete('/api/banners/:bannerId', authMiddleware, adminMiddleware, async (req
     }
 });
 
+// 상품 검색
+app.get('/api/search', async (req, res) => {
+    try {
+        const { keyword } = req.query;
+        if(!keyword) {
+            return res.status(400).json({message: '검색어를 입력해 주세요.'});
+        } else if(keyword.length > 100) {
+            throw new Error('검색어가 너무 깁니다.');
+        }
+        // 특수문자 리플레이스 함수 '$&' 조건에 맞는 문자 그래도 치환한다는 의미 $* 식으로 여러 옵션이 있음. 특수문자 앞에 \를 붙여서 치환함
+        function escapeRegex(text) {
+            return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // 정규표현식으로 사용해 대소문자 구분 없이 검색
+        const safeKeyword = escapeRegex(keyword);
+        // 정규식 객체로 사전에 만듬. 권장은 몽고db에 직접 사용 
+        const searchRegex = new RegExp(safeKeyword, 'i');
+
+        // ✅ 학습용 디버깅 로그
+        // console.log('=== 검색 방식 비교 학습 ===');
+        // console.log('원본 키워드:', keyword);
+        // console.log('안전한 키워드:', safeKeyword);
+        // console.log('정규식 객체:', searchRegex);
+        // console.log('MongoDB 쿼리 조건:');
+        // console.log('  - title 검색:', {$regex: safeKeyword, $options: 'i'});
+        // console.log('  - content 검색:', searchRegex);
+
+        const searchResult = await Product.find({$or: [
+            // 몽고 db의 졍규식 연사자를 직접 사용함
+            {title: {$regex: safeKeyword, $options: 'i'}},
+            {content: searchRegex}
+        ]}).sort({createdAt: -1}).populate('seller', 'username');
+
+        if(searchResult.length === 0) {
+            return res.status(404).json({message: '조건에 맞는 상품이 없습니다.'});
+        }
+        res.json(searchResult);
+    } catch(error) { 
+        console.error('상품 검색 중 에러 발생:', error);
+        res.status(500).json({message: '서버 오류 발생'});
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)

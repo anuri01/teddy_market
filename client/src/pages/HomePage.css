@@ -213,7 +213,7 @@ background-color:#52a8f3;
 
 .slick-dots li button:before {
   font-family: 'slick';
-  font-size: 6px; /* 점 크기 */
+  font-size: 1rem; /* 점 크기 */
   line-height: 20px;
   position: absolute;
   top: 0;
@@ -222,15 +222,15 @@ background-color:#52a8f3;
   height: 20px;
   content: '•';
   text-align: center;
-  opacity: .25;
+  opacity: .2;
   color: black; /* 비활성 점 색상 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 .slick-dots li.slick-active button:before {
-  opacity: .75;
-  color: #31BBE5; /* 활성 점 색상 */
+  opacity: .9;
+  color: #03ef89; /* 활성 점 색상 */
 }
 
 /* slick arrows (좌우 화살표) 스타일 */
