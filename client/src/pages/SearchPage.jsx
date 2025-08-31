@@ -26,7 +26,17 @@ function SearchPage() {
             const response = await api.get(`search?keyword=${keyword}`);
             setSearchResult(response.data)
         } catch (error) {
-            toast.error('검색 결과를 불러올 수 없습니다.', error)
+          console.error('검색 에러:', error);
+            setSearchResult([]);
+            
+            // ✅ 404는 검색결과 없음 (정상적인 상황)
+            if (error.response?.status === 404) {
+                // 토스트 표시하지 않음
+                console.log('검색 결과 없음 (정상)');
+            } else {
+                // ✅ 실제 에러만 토스트 표시
+                toast.error('검색 중 오류가 발생했습니다.');
+            }
         } finally {
             setIsLoading(false);
         }
