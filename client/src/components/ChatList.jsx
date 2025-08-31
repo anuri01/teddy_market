@@ -22,6 +22,18 @@ function ChatList({ onClose, onRoomSelect }) {
         };
         fetchRooms();
     }, []);
+    // 화면 로딩 시 바로 컨펌창 열리는 버그 확인해야 함
+    const roomDelete = async (roomId) => {
+        // if(!window.confirm('채팅방을 삭제하면 대화내용이 사라집니다.')) return
+        // try {
+        //     await api.delete(`/chat/rooms/${roomId}`);
+        //     toast.success('대화방이 삭제됐습니다.')
+
+        // } catch(error) {
+        //     toast.error('대화방 삭제에 실패했습니다.');
+        //     console.error('삭제 실패', error);
+        // }
+    }
 
     return (
         <div className="chat-list-container">
@@ -39,10 +51,11 @@ function ChatList({ onClose, onRoomSelect }) {
                                     <p className="room-product-title">{room.product.title}</p>
                                     <p className="room-partner">대화 상대: {room.seller.username}</p>
                                 </div>
+                                <button type="button" className='chat-action-button button-primary' onClick={roomDelete(room._id)}>삭제</button>
                             </div>
                         ))
                     ) : (
-                        <p>대화방이 없습니다.</p>
+                        <p className='loading-message'>대화방이 없습니다.</p>
                     )}
             </div>
         </div>

@@ -751,6 +751,7 @@ app.post('/api/chat/initiate', authMiddleware, async(req, res) => {
             });
             await chatRoom.save();
         }
+        chatRoom = await ChatRooms.findOne({product: productId, seller: sellerId, buyer: buyerId}).populate('seller', 'username').populate('buyer', 'username');
         res.status(200).json(chatRoom);
     } catch(error) {
         res.status(500).json({message: '채팅방 시작 중 오류 발생'});
