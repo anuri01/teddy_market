@@ -270,3 +270,13 @@ background-color:#52a8f3;
 .slick-next {
   right: 25px; /* 오른쪽 여백 */
 }
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #31BBE5;
+    border-radius: 50%;
+    animation: spin 0.5s linear infinite;
+    margin: 20px auto;
+}

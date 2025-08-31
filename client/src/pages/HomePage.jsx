@@ -97,6 +97,7 @@ if(isLoading) {
   return <div className="loading-message">
     <p>페이지를 불러오는 중입니다.</p>
     <p>(최대 1~2분 소요)</p>
+    <div className="spinner"></div>
   </div>
 }
 
