@@ -94,8 +94,8 @@ function ProductDetailPage({ onOpenChat }) {
             </section>
             
             <section className="seller-info">
-                <span>작성자: {product.seller.username}</span>
-                <span>작성일: {new Date(product.createdAt).toLocaleDateString()}</span>
+                <span>판매자: {product.seller.username}</span>
+                <span>등록일: {new Date(product.createdAt).toLocaleDateString()}</span>
             </section>
             <div className="product-description" dangerouslySetInnerHTML={{ __html: product.content }} />
 

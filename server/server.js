@@ -22,6 +22,7 @@ import { s3 } from './upload.js'; // 👈 이 줄 추가
 import { memoryStorage } from 'multer';
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { populate } from 'dotenv';
+import { channel } from 'diagnostics_channel';
 // (나중에 Product, Chat 모델도 여기에 추가)
 
 //express 앱 설정
@@ -765,9 +766,8 @@ app.get('/api/chat/rooms', authMiddleware, async(req,res) => {
         res.json(rooms);
     } catch(error) {
         res.status(500).json({message: '채팅방 목록 조회 중 에러 발생'});
-
     }
-})
+});
 
 //특정 채팅방 메시지 가져오기
 app.get('/api/chat/rooms/:roomId/messages', authMiddleware, async(req, res) => {
@@ -780,6 +780,23 @@ app.get('/api/chat/rooms/:roomId/messages', authMiddleware, async(req, res) => {
         res.status(500).json({message: '메시지 조회 중 에러 발생'});
  } 
 });
+
+// 채팅방 삭제
+app.delete('/api/chat/rooms/:roomId', authMiddleware, async(req, res) => {
+  try {
+    const { roomId } = req.params;
+    const isMatch = await ChatRooms.findOne({_id: roomId, participants: req.user.id})
+    if(!isMatch) {
+        return res.status(400).json({message: '삭제 권한이 없거나 대화방이 존재하지 않습니다.'})
+    }
+    await Message.deleteMany({chatRoom: roomId});
+    await ChatRooms.findByIdAndDelete(roomId);
+    
+    res.json('대화방이 삭제되었습니다.')
+  } catch(error) {
+    res.status(500).json({message:'대화방 삭제 중 오류가 발생했습니다.'});
+  }
+})
 
 // 배너 등록
 app.post('/api/banners', authMiddleware, adminMiddleware, upload.single('bannerImage'), async(req, res) => {

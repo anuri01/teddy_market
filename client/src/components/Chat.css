@@ -1,7 +1,7 @@
 /* client/src/components/Chat.css */
 .chat-action-button {
   margin: 0 0 0 auto;
-  display: inline-flex;
+  display: inline-block;
   min-width: 3rem;
   align-items: center;
   justify-content: center;
@@ -18,13 +18,13 @@
 }
 
 .chat-action-button:hover {
-  background-color: #1faad5;
+  display: block;
 }
 
 /* 플로팅 채팅 버튼 */
 .chat-button {
-  position: fixed;
-  bottom: 6rem;
+  position: absolute;
+  bottom: 8.5rem;
   right: 1.5rem;
   width: 60px;
   height: 60px;
@@ -43,7 +43,7 @@
 
 /* 채팅 목록창 컨테이너 */
 .chat-list-container {
-  position: fixed;
+  position: absolute;
   bottom: 11rem;
   right: 1.5rem;
   width: 350px;
@@ -58,7 +58,7 @@
 
 /* 채팅방 상세창 컨테이너 */
 .chat-room-container {
-  position: fixed;
+  position: absolute;
   bottom: 1.5rem;
   right: 1.5rem;
   width: 380px;
