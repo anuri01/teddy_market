@@ -4,6 +4,8 @@ import toast from "react-hot-toast";
 // import useUserStore from "../store/userStore";
 import api from "../api/axiosConfig";
 import './ProfilePage.css';
+import SimpleModal from "../components/SimpleModal";
+import BottomSheet from "../components/BottomSheet";
 
 function ProfilePage() {
     // const { user } = useUserStore();
@@ -18,6 +20,10 @@ function ProfilePage() {
     const [ newPassword, setNewPassword ] = useState('');
     const [ confirmPassword, setConfirmPassword ] = useState('');
     // const navigate = useNavigate();
+
+    // --- 👇 테스트용 상태 추가 ---
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -206,6 +212,36 @@ function ProfilePage() {
                     </div>
                 )}
             </div>
+            {/* <div className="test-buttons-container">
+                <h3>(임시) 팝업 테스트 영역</h3>
+                <button onClick={() => setIsModalOpen(true)} className="button button-secondary">
+                    모달 열기
+                </button>
+                <p></p>
+                <button onClick={() => setIsSheetOpen(true)} className="button button-secondary">
+                    바텀시트 열기
+                </button>
+            </div> */}
+
+            {/* 팝업 컴포넌트들은 JSX의 아무 곳에나 두어도 괜찮습니다. */}
+            {/* <SimpleModal 
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)} 
+            //모달이 뜰 부모위치는 별도로 지정해야 함. 안그러면 브라우저 창 기준으로 열림
+            parentSelector={() => document.getElementById('modal-root')}
+            >
+                <h2>테스트 모달</h2>
+                <p>이것은 중앙에 뜨는 모달 팝업입니다.</p>
+                <img src="https://placehold.co/400x200" alt="placeholder" style={{ maxWidth: '100%' }} />
+            </SimpleModal>
+            <BottomSheet 
+            isOpen={isSheetOpen}
+            onClose={() => setIsSheetOpen(false)}
+            >
+                <h2>바텀시트 테스트 모달</h2>
+                <p>이것은 하단에 뜨는 모달 팝업입니다.</p>
+                <img src="https://placehold.co/400x200" alt="placeholder" style={{ maxWidth: '100%' }} />
+            </BottomSheet> */}
 
         </div>
     )

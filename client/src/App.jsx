@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import useUserStore from './store/userStore';
 import Header from './components/Header'; // 헤더 컴포넌트 임포트
 import HomePage from './pages/HomePage';
@@ -22,8 +22,12 @@ import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 impo
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
+import SimpleModal from './components/SimpleModal'; // 👈 SimpleModal import
+import BottomSheet from "./components/BottomSheet"; //👈 BottomSheet import
+import { getCookie } from './utils/cookie'; // 👈 유틸리티 함수(팝업 일정기간 보기 않기 설정) import
 import './App.css'
 import './index.css'
+import './components/Modal.css'; // 👈 이 줄을 추가해주세요.
 // import logoFooter from '../public/images/logo_footer.png';
 // import TestPage from './pages/TestPage';
 // import ParnetPage from './pages/ParentPage';
@@ -39,8 +43,10 @@ function App() {
   // 채팅 관련 상태 추가
   const [ isChatListOpen, setIsChatListOpen ] = useState(false);
   const [ currentChatRoom, setCurrentChatRoom ] = useState(null); // 채팅방 객체 저장
+  const [ isEventModalOpen, setIsEventModalOpen ] = useState(false); // 이벤트 모달 상태 추가
+
+  //채팅 목록이나 채팅방이 하나라도 열려 있으면 스크롤을 막는 클래스 추가
   useEffect(() => {
-    //채팅 목록이나 채팅방이 하나라도 열려 있으면 스크롤을 막는 클래스 추가
     if (isChatListOpen || currentChatRoom) {
       document.body.classList.add('chat-open');
     } else {
@@ -53,6 +59,8 @@ function App() {
     }
 
   },[isChatListOpen, currentChatRoom])
+  
+  // 로그인 시 socket.io 연결
   useEffect(() => {
     if(isLoggedIn) {
       socket.connect();
@@ -64,13 +72,21 @@ function App() {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    // 앱이 처음 로드될 때 쿠키를 확인해 모달을 띄울지 결정
+    const shouldShowModal = !getCookie('hideModal_mainEvent');
+    if (shouldShowModal) {
+      setIsEventModalOpen(true);
+    }
+  },[]);
+
   const openChatRoom = (room) => {
     setCurrentChatRoom(room);
     setIsChatListOpen(false); // 채팅방 열면 목록 닫기
   };
 
   return (
-    <div className='app-container'>
+    <div className='app-container' id='modal-root'>
         <Toaster position="top-center" /> {/* 👈 앱 최상단에 Toaster '알림판' 설치 */}
      <Header />
       <main className='app-main'>
@@ -99,6 +115,18 @@ function App() {
           {/* <Route path='/parent' element={<ParentPage />}></Route> */}
         </Routes>
       </main>
+       {/* --- 👇 이벤트 모달 컴포넌트 추가 --- */}
+            <SimpleModal
+                isOpen={isEventModalOpen}
+                onClose={() => setIsEventModalOpen(false)}
+                modalId="mainEvent" // 각 모달을 구분하기 위한 고유 ID
+            >
+                <h2>🎉 테디마켓 특별 이벤트! 🎉</h2>
+                <p>지금 가입하시면 10% 할인 쿠폰을 드려요!</p>
+              <Link to='/signup'>
+                <img onClick={() => setIsEventModalOpen(false)} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
+                </Link>
+            </SimpleModal>
       <Footer />
       {/* --- 👇 채팅 관련 UI 추가 --- */}
             {isLoggedIn && (

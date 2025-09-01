@@ -1,0 +1,109 @@
+/* 모달 뒷 배경 스타일 */
+.ModalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; 자식요소가 직접 위치를 설정하게 함 */
+  padding-top : 8rem;
+}
+
+/* 모달 창 자체의 스타일 */
+.ModalContent {
+  position: relative;
+  width: 85%;
+  max-width: 500px;
+  background: rgb(255, 255, 255);
+  padding: 2rem;
+  border-radius: 8px;
+  outline: none;
+  align-self: flex-start; /* flex박스 상단에 붙도록 설정 */
+  height: fit-content; /* 👈 [추가] 내용물 높이에 맞게 자동 조절 */
+}
+
+.modal-body, .bottomsheet-body{
+    padding-bottom: 1rem;
+    text-align: center;
+}
+
+.modal-footer, .bottomsheet-footer{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid #959595;
+}
+
+.hide-button {
+    background: none;
+    border: none;
+    color: #868e96;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.hide-button:hover {
+    color: #343a40;
+    text-decoration: underline;
+}
+
+/* --- 👇 바텀시트 스타일 추가 --- */
+
+/* 바텀시트 창 자체의 스타일 */
+.BottomSheetContent {
+  position: absolute; /* 화면 기준 */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 16px 16px 0 0; /* 위쪽 모서리만 둥글게 */
+  padding: 1.5rem;
+  padding-top: 1rem;
+  max-height: 80vh; /* 화면 높이의 80%를 넘지 않도록 */
+  overflow-y: auto;
+  outline: none;
+
+    /* 애니메이션 설정 */
+  transform: translateY(100%); /* 기본 상태: 화면 아래에 숨김 */
+  transition: transform 300ms ease-in-out;
+}
+
+/* react-modal이 열릴 때 추가해주는 클래스 해당 클래스는 컴포넌트에서 자동으로 추가됨 */
+.ReactModal__Content--after-open.BottomSheetContent {
+  transform: translateY(0); /* 열린 상태: 제자리로 올라옴 */
+}
+
+/* react-modal이 닫히기 시작할 때 추가해주는 클래스 */
+.ReactModal__Content--before-close.BottomSheetContent {
+  transform: translateY(100%); /* 닫히는 상태: 다시 아래로 내려감 */
+}
+
+/* 상단 손잡이 UI */
+.handle-bar-container {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 1rem;
+}
+.handle-bar {
+  width: 40px;
+  height: 4px;
+  background-color: #dee2e6;
+  border-radius: 2px;
+}
+
+/* 공통 닫기 버튼 스타일 */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #868e96;
+}
