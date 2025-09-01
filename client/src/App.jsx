@@ -39,7 +39,20 @@ function App() {
   // 채팅 관련 상태 추가
   const [ isChatListOpen, setIsChatListOpen ] = useState(false);
   const [ currentChatRoom, setCurrentChatRoom ] = useState(null); // 채팅방 객체 저장
+  useEffect(() => {
+    //채팅 목록이나 채팅방이 하나라도 열려 있으면 스크롤을 막는 클래스 추가
+    if (isChatListOpen || currentChatRoom) {
+      document.body.classList.add('chat-open');
+    } else {
+      document.body.classList.remove('chat-open');
+    }
 
+    // 컴포넌트가 사라질 때를 대비한 정리 함수
+    return () => {
+      document.body.classList.remove('chat-open');
+    }
+
+  },[isChatListOpen, currentChatRoom])
   useEffect(() => {
     if(isLoggedIn) {
       socket.connect();

@@ -8,6 +8,8 @@ body {
   background-color: #f0f2f5;
 }
 
+body.chat-open { overflow: hidden;}
+
 .loading-message {
   margin: 0 auto;
   /* align-items: center; */
