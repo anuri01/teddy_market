@@ -51,6 +51,21 @@ function ProductListPage() {
         }
     },[])
 
+     // 바텀이나 모달이 열릴때 뒷쪽 화면이 스크롤 안되도록 제어. 추후 전역스토어로 이관 필요함
+        useEffect(() => {
+        if (isEventModalOpen) {
+          document.body.classList.add('chat-open');
+        } else {
+          document.body.classList.remove('chat-open');
+        }
+    
+        // 컴포넌트가 사라질 때를 대비한 정리 함수
+        return () => {
+          document.body.classList.remove('chat-open');
+        }
+    
+      },[isEventModalOpen])
+
     // '더보기' 버튼 클릭 시 실행될 함수
     const handleLoadMore = () => {
         // page 상태 값을 1 증가시킵니다. 이 변경은 위의 useEffect를 자동으로 다시 실행시킵니다.
