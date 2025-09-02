@@ -3,8 +3,11 @@
   position: absolute;
   top: 0;
   left: 0;
+  /* transform: translateX(-50%); */
   right: 0;
   bottom: 0;
+  /* width: 100wv;
+  max-width: 420px; */
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 2000;
   display: flex;
@@ -17,7 +20,7 @@
 .ModalContent {
   position: relative;
   width: 85%;
-  max-width: 500px;
+  max-width: 420px;
   background: rgb(255, 255, 255);
   padding: 2rem;
   border-radius: 8px;
@@ -56,10 +59,12 @@
 
 /* 바텀시트 창 자체의 스타일 */
 .BottomSheetContent {
-  position: absolute; /* 화면 기준 */
+  position: fixed; /* 뷰포트 기준 */
   bottom: 0;
-  left: 0;
+  left: 50%; /* 뷰포트 기준 가운데로 옮김. 하지만 바텀시트의 왼쪽 기준으로 50% 가기때문에 trasform 옵션으로 실제 가운데로 맞춰야 함.*/
   right: 0;
+  width: 100vW; 
+  max-width: 420px; /* 최대 크기를 지정해 앱의 화면 크기와 맞춤. */
   background: white;
   border-radius: 16px 16px 0 0; /* 위쪽 모서리만 둥글게 */
   padding: 1.5rem;
@@ -69,18 +74,19 @@
   outline: none;
 
     /* 애니메이션 설정 */
-  transform: translateY(100%); /* 기본 상태: 화면 아래에 숨김 */
+  transform: translate(-50%, 100%); /* X축 중앙, Y축 아래로 숨김  -50% 옵션을 줘 바텀시트를 실제 정 가운데로 잡춤. */
+  /* transform: translateY(100%); 기본 상태: 화면 아래에 숨김 */
   transition: transform 300ms ease-in-out;
 }
 
 /* react-modal이 열릴 때 추가해주는 클래스 해당 클래스는 컴포넌트에서 자동으로 추가됨 */
 .ReactModal__Content--after-open.BottomSheetContent {
-  transform: translateY(0); /* 열린 상태: 제자리로 올라옴 */
+  transform: translate(-50%, 0); /* X축 중앙, Y축 제자리 */
 }
 
 /* react-modal이 닫히기 시작할 때 추가해주는 클래스 */
 .ReactModal__Content--before-close.BottomSheetContent {
-  transform: translateY(100%); /* 닫히는 상태: 다시 아래로 내려감 */
+  transform: translate(-50%, 100%); /* X축 중앙, Y축 아래로 숨김 */
 }
 
 /* 상단 손잡이 UI */
