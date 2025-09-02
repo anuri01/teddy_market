@@ -6,11 +6,11 @@ import './Modal.css';
 Modal.setAppElement('#root')
 
 // 부모에게 props로 isOpne(팝업열림상태), onClose(팝업닫기), children(자식 요소) 받는다.
-function BottomSheet ({ isOpen, onClose, sheetId, children }) {
+function BottomSheet ({ isOpen, onClose, id, children }) {
 
     // 다시 보지않기 버튼 클릭 처리 함수
         const handleHide = (days) => {
-            setCookieWithExpiry(`hideSheet_${sheetId}`, 'true', days)
+            setCookieWithExpiry(`hideSheet_${id}`, 'true', days)
             onClose();
         }
 
@@ -21,7 +21,7 @@ function BottomSheet ({ isOpen, onClose, sheetId, children }) {
         className="BottomSheetContent"
         overlayClassName="ModalOverlay"
         contentLabel="Event&Notice BottomSheet"
-        parentSelector={() => document.getElementById('modal-root')}
+        parentSelector={() => document.getElementById('modal-root')} // 부모 요소를 지정. 지정하지 않으면 body 기준으로 위치를 잡음.
         closeTimeoutMS={300} // 애니메이션 시간과 맞춰줌
         >
             <div className="handle-bar-container">

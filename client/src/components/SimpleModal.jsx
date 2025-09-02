@@ -6,11 +6,11 @@ import { setCookieWithExpiry } from "../utils/cookie";
 // App의 root 엘리먼트를 명시하여 스크린 리더가 모달 뒷 배경을 읽지 않도록 설정(aria-hidden 처리)
 Modal.setAppElement('#root');
 
-function SimpleModal ({ isOpen, onClose, modalId, children }) {
+function SimpleModal ({ isOpen, onClose, id, children }) {
     
     // 다시 보지않기 버튼 클릭 처리 함수
     const handleHide = (days) => {
-        setCookieWithExpiry(`hideModal_${modalId}`, 'true', days)
+        setCookieWithExpiry(`hideModal_${id}`, 'true', days)
         onClose();
     }
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import useUserStore from './store/userStore';
+import useModalStore from './store/modalStore';
 import Header from './components/Header'; // 헤더 컴포넌트 임포트
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -35,6 +36,7 @@ import './components/Modal.css'; // 👈 이 줄을 추가해주세요.
 
 function App() {
   const { isLoggedIn, user } = useUserStore();
+  const { modalType, openModal, closeModal } = useModalStore();
   // const navigate = useNavigate(); // 👈 페이지 이동을 위한 navigate 함수 준비
   
   // 채팅 관련 상태 추가
@@ -56,6 +58,18 @@ function App() {
     }
 
   },[isChatListOpen, currentChatRoom])
+
+  // 모달이나 바텀시트가 열려 있으면 스크롤 막는 클래스 추가 
+  useEffect(() => {
+    if(modalType) {
+      document.body.classList.add('chat-open');
+    } else {
+      document.body.classList.remove('chat-open');
+    }
+    return () => {
+      document.body.classList.remove('chat-open');
+    }
+  },[modalType])
   
   // 로그인 시 socket.io 연결
   useEffect(() => {
