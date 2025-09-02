@@ -22,9 +22,6 @@ import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 impo
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
-// import SimpleModal from './components/SimpleModal'; // 👈 SimpleModal import
-// import BottomSheet from "./components/BottomSheet"; //👈 BottomSheet import
-// import { getCookie } from './utils/cookie'; // 👈 유틸리티 함수(팝업 일정기간 보기 않기 설정) import
 import './App.css'
 import './index.css'
 import './components/Modal.css'; // 👈 이 줄을 추가해주세요.
@@ -72,14 +69,6 @@ function App() {
     }
   }, [isLoggedIn]);
 
-  // useEffect(() => {
-  //   // 앱이 처음 로드될 때 쿠키를 확인해 모달을 띄울지 결정
-  //   const shouldShowModal = !getCookie('hideModal_mainEvent');
-  //   if (shouldShowModal) {
-  //     setIsEventModalOpen(true);
-  //   }
-  // },[]);
-
   const openChatRoom = (room) => {
     setCurrentChatRoom(room);
     setIsChatListOpen(false); // 채팅방 열면 목록 닫기
@@ -115,19 +104,6 @@ function App() {
           {/* <Route path='/parent' element={<ParentPage />}></Route> */}
         </Routes>
       </main>
-       {/* --- 👇 이벤트 모달 컴포넌트 추가 --- */}
-            {/* <SimpleModal
-                isOpen={isEventModalOpen}
-                onClose={() => setIsEventModalOpen(false)}
-                modalId="mainEvent" // 각 모달을 구분하기 위한 고유 ID
-            >
-                <h2>🎉 테디마켓 특별 이벤트! 🎉</h2>
-                <p>지금 가입하시면 10% 할인 쿠폰을 드려요!</p>
-              <Link to='/signup'>
-                <img onClick={() => setIsEventModalOpen(false)} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
-                </Link>
-            </SimpleModal>
-      <Footer /> */}
       {/* --- 👇 채팅 관련 UI 추가 --- */}
             {isLoggedIn && (
                 <>

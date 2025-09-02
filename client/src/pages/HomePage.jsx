@@ -18,7 +18,7 @@ function HomePage() {
   const [ isLoading, setIsLoading ]= useState(true);
   // const [ orderId, setOrderId ] = useState('');
   const { isLoggedIn, user } = useUserStore(); // 로그인상태 확인을 위한 전역스토어 내 상태 호출
-  const [ isEventModalOpen, setIsEventModalOpen ] = useState(false); // 이벤트 모달 상태 추가
+  // const [ isEventModalOpen, setIsEventModalOpen ] = useState(false); // 이벤트 모달 상태 추가
   const [ isBottomSheetOpen, setIsBottomSheetOpen ] = useState(false); // 바텀시트 팝업 상태 추가
   const navigate = useNavigate();
   
@@ -67,12 +67,7 @@ function HomePage() {
     const shouldShowBottomSheet = !getCookie('hideSheet_mainEvent');
     if(shouldShowBottomSheet) {
       setIsBottomSheetOpen(true); // value같이 리턴되면되면 false로 리턴해 바텀시트 오픈 안함.
-    }
-
-    const shouldShowModal = !getCookie('hideModal_mainEvent');
-    if(shouldShowModal) {
-      setIsEventModalOpen(true); // value같이 리턴되면되면 false로 리턴해 바텀시트 오픈 안함.
-    }
+    };
     fetchData();
   }, []);
 
@@ -192,17 +187,6 @@ if(isLoading) {
               <Link to="/write1" className="button button-primary add-product-button">상품 등록2</Link>
             </div>
            )} */}
-           {/* <SimpleModal 
-            isOpen={isEventModalOpen} // 모달 오픈 여부 props 전달
-            onClose={() => setIsEventModalOpen(false)} // 모달 닫기 함수 전달
-            modalId={'mainEvent'} // 각 모달을 구분하기 위한 고유 ID 전달
-           >
-             <h2>🎉 테디마켓 특별 이벤트! 🎉</h2>
-             <p>지금 가입하시면 10% 할인 쿠폰을 드려요!</p>
-            <Link to='/signup'>
-              <img onClick={() => setIsEventModalOpen(false)} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
-            </Link>
-          </SimpleModal> */}
           <BottomSheet 
             isOpen={isBottomSheetOpen} // 바텀 오픈 여부 props 전달
             onClose={() => setIsBottomSheetOpen(false)} // 바텀시트 닫기 함수 전달
