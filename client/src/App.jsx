@@ -36,7 +36,7 @@ import './components/Modal.css'; // 👈 이 줄을 추가해주세요.
 
 function App() {
   const { isLoggedIn, user } = useUserStore();
-  const { modalType, openModal, closeModal } = useModalStore();
+  const { scrollControl } = useModalStore();
   // const navigate = useNavigate(); // 👈 페이지 이동을 위한 navigate 함수 준비
   
   // 채팅 관련 상태 추가
@@ -44,9 +44,9 @@ function App() {
   const [ currentChatRoom, setCurrentChatRoom ] = useState(null); // 채팅방 객체 저장
   // const [ isEventModalOpen, setIsEventModalOpen ] = useState(false); // 이벤트 모달 상태 추가
 
-  //채팅 목록이나 채팅방이 하나라도 열려 있으면 스크롤을 막는 클래스 추가
+  //채팅 목록이나 채팅방이 하나라도 열려 있으면 스크롤을 막는 클래스 추가 + 팝업까지 추가
   useEffect(() => {
-    if (isChatListOpen || currentChatRoom) {
+    if (isChatListOpen || currentChatRoom || scrollControl) {
       document.body.classList.add('chat-open');
     } else {
       document.body.classList.remove('chat-open');
@@ -57,19 +57,19 @@ function App() {
       document.body.classList.remove('chat-open');
     }
 
-  },[isChatListOpen, currentChatRoom])
+  },[isChatListOpen, currentChatRoom, scrollControl])
 
-  // 모달이나 바텀시트가 열려 있으면 스크롤 막는 클래스 추가 
-  useEffect(() => {
-    if(modalType) {
-      document.body.classList.add('chat-open');
-    } else {
-      document.body.classList.remove('chat-open');
-    }
-    return () => {
-      document.body.classList.remove('chat-open');
-    }
-  },[modalType])
+  // 모달이나 바텀시트가 열려 있으면 스크롤 막는 클래스 추가 + 위로 통합함.
+  // useEffect(() => {
+  //   if(scrollControl) {
+  //     document.body.classList.add('chat-open');
+  //   } else {
+  //     document.body.classList.remove('chat-open');
+  //   }
+  //   return () => {
+  //     document.body.classList.remove('chat-open');
+  //   }
+  // },[scrollControl])
   
   // 로그인 시 socket.io 연결
   useEffect(() => {

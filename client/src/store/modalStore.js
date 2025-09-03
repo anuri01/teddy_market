@@ -12,13 +12,22 @@ import { create } from "zustand";
 export const useModalStore = create(set => ({
     // modals 객체 안에 관리할 모달 수 만큼 키(모달이름)를 만들어 진행
     // state는 store안에 모든 상태값을 가리키는 키이다. 
+    scrollControl: false,
     modals: {},
-    openModal: (type, props = {}) => set(state => ({
-        modals: {...state.modals, [type]: {open: true, props}}
-    })),
-    closeModal: (type) => set(state => ({
-        modals: { ...state.modals, [type]: {...state.modals[type], open: false}}
-    })),
+    openModal: (type, props = {}) => set(state => {
+        // 명령문이 있을 경우 묵시적 객체 반환을 하지 않고 명령문 실행 후 return으로 state값을 반환
+        const newModal = {...state.modals, [type]: {open: true, props}};
+        return {
+            modals: newModal,
+            scrollControl: Object.values(newModal).some(modal => modal.open)
+        }
+    }),
+    closeModal: (type) => set(state => {
+        const newModal = { ...state.modals, [type]: {...state.modals[type], open: false}};
+        return{
+        modals: newModal,
+        scrollControl: Object.values(newModal).some(modal => modal.open)}
+    }),
 }))
 
 export default useModalStore;
