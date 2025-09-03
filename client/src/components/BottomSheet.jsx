@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import { setCookieWithExpiry } from '../utils/cookie'; // 👈 유틸리티 함수 import
+import { setPopupStateWithExpiry } from '../utils/cookie'; // 👈 유틸리티 함수 import
 import './Modal.css';
 
 Modal.setAppElement('#root')
@@ -10,7 +10,7 @@ function BottomSheet ({ isOpen, onClose, id, children }) {
 
     // 다시 보지않기 버튼 클릭 처리 함수
         const handleHide = (days) => {
-            setCookieWithExpiry(`hideSheet_${id}`, 'true', days)
+            setPopupStateWithExpiry(id ,days)
             onClose();
         }
 

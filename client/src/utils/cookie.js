@@ -1,4 +1,37 @@
-// 만료 시간과 함께 localStorage에 데이터 저장
+const POPUP_STATE_KEY = 'popupState';
+
+// 팝업 상태 저장(id, days)
+export const setPopupStateWithExpiry = (id, days) => {
+    const now = new Date();
+    now.setDate(now.getDate() + days - 1);
+    now.setHours(23, 59, 59, 999);
+
+    //기존 상태 불러오기(통합됐기 떄문)
+    const stateStr = localStorage.getItem(POPUP_STATE_KEY);
+    const state = stateStr ? JSON.parse(stateStr) : {};
+
+    //id별로 만료시간 저장
+    state[id] = now.getTime();
+    localStorage.setItem(POPUP_STATE_KEY, JSON.stringify(state));
+};
+
+//팝업 상태(만료기간) 확인
+export const getPopupState = (id) => {
+    const stateStr = localStorage.getItem(POPUP_STATE_KEY);
+    if (!stateStr) return null;
+    const state = JSON.parse(stateStr);
+    const expiry = state[id];
+    if (!expiry) return false;
+    if (Date.now() > expiry) {
+        //만료 됐으면 삭제
+        delete state[id];
+        localStorage.setItem(POPUP_STATE_KEY, JSON.stringify(state));
+        return false;
+    }
+    return true;
+}
+
+// 팝업 상태를 저장(통합 관리전)
 export const setCookieWithExpiry = (key, value, days) => {
     
     // 1. '지금' 시간을 기준으로 Date 객체 생성

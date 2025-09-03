@@ -4,7 +4,7 @@ import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
 import SimpleModal from "../components/SimpleModal";
 import useModalStore from "../store/modalStore";
-import { getCookie } from "../utils/cookie";
+import { getPopupState } from "../utils/cookie";
 import './ProductListPage.css';
 import './HomePage.css';
 
@@ -19,6 +19,7 @@ function ProductListPage() {
     const navigate = useNavigate();
     // const [ searchParams, setSearchParams ] = useSearchParams(); 
     
+    // 상품 목록 불러오기
     useEffect(() => {
         const fetchProducts = async () => {
             setIsLoading(true);
@@ -45,11 +46,12 @@ function ProductListPage() {
             };
             fetchProducts();
         }, [page]);
-        
+    
+    // 모달, 팝업 게시 여부 확인
     useEffect(() => {
-        const shouldShowModal = !getCookie('hideModal_productListEvent');
+        const shouldShowModal = !getPopupState('productListEvent');
         if(shouldShowModal) {
-            openModal('eventModal', {id: 'productListEvent'});
+            openModal('productListEvent', {id: 'productListEvent'});
         }
     },[openModal])
 
@@ -144,14 +146,14 @@ function ProductListPage() {
     )}
                      </div>
                      <SimpleModal
-                      isOpen={modals.eventModal?.open}
-                      onClose={() => closeModal('eventModal')}
-                      id={modals.eventModal?.props.id}
+                      isOpen={modals.productListEvent?.open}
+                      onClose={() => closeModal('productListEvent')}
+                      id={modals.productListEvent?.props.id}
                      >
                         <h2>🎉 테디마켓 특별 이벤트! 🎉</h2>
                         <p>지금 가입하시면 10% 할인 쿠폰을 드려요!</p>
                         <Link to='/signup'>
-                          <img onClick={() => closeModal('eventModal')} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
+                          <img onClick={() => closeModal('productListEvent')} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
                         </Link>
                      </SimpleModal>
         </div>
