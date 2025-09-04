@@ -22,6 +22,8 @@ import socket from './socket'; // 소켓 인스턴스 import
 import NaverCallback from './pages/NaverCallback'; // 👈 콜백 페이지 import
 import KakaoCallback from './pages/KakaoCallback'; // 👈 콜백 페이지 import
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
+import AdminPage from './pages/AdminPage';
 import { Toaster } from 'react-hot-toast';
 import './App.css'
 import './index.css'
@@ -109,6 +111,12 @@ function App() {
           <Route path='/payment/:orderId' element={<ProtectedRoute><PaymentPage /></ProtectedRoute>}></Route>
           <Route path='/order-complete/:orderId' element={<ProtectedRoute><OrderCompletePage /></ProtectedRoute>}></Route>
           <Route path='/productlist' element={<ProductListPage />}></Route>
+          <Route element={<AdminProtectedRoute />}>
+            <Route path='/admin' element={<AdminPage />}>
+               {/* 나중에 여기에 중첩 라우트 추가 */}
+              {/* 예: <Route path="popups" element={<PopupManager />} /> */}
+            </Route> 
+          </Route>
           <Route path='/search' element={<SearchPage />}></Route>
           <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>}></Route>
           {/* 👇 콜백 경로 추가 */}

@@ -1,17 +1,37 @@
 // 도구 가져오기
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import toast from 'react-hot-toast';
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import AdminMenu from './AdminMenu'; // 👈 AdminMenu import
+import Menu from "./Menu"; // Menu import
 import useUserStore from "../store/userStore";
+import './AdminMenu.css'; // 👈 AdminMenu CSS import
 import './Header.css';
 
 // ---2. 컴포넌트 준비
 function Header() {
     const [searchKeyword, setSerachKeyword] = useState('')
-    const { isLoggedIn, logout } = useUserStore();
+    const { isLoggedIn, user, logout } = useUserStore();
+    const [ isAdminMenuOpen, setIsAdminMenuOpen ] = useState(false); // 관리자 메뉴 상태 추가
+    const [ isMenuOpen, setIsMenuOpen ] = useState(false); // 전체메뉴 상태 추가
     const location = useLocation();
     const navigate = useNavigate();
     
+     // 뒷화면 스크롤 잠금
+     useEffect(() => {
+        if (isAdminMenuOpen || isMenuOpen) {
+          document.body.classList.add('chat-open');
+        } else {
+          document.body.classList.remove('chat-open');
+        }
+    
+        // 컴포넌트가 사라질 때를 대비한 정리 함수
+        return () => {
+          document.body.classList.remove('chat-open');
+        }
+    
+      },[isAdminMenuOpen, isMenuOpen])
+
     const handleLogout = () => {
         logout();
         toast('로그아웃 되었습니다.');
@@ -45,6 +65,8 @@ function Header() {
         return '';
     }
 
+
+
 return (   
     <header className="app-header">
         <div className="header-wrap">
@@ -68,6 +90,10 @@ return (
                 <>
                     <Link to="/profile">내 정보</Link>
                     <button onClick={handleLogout} className="nav-button">로그아웃</button>
+                    {/* <button onClick={() => setIsMenuOpen(true)} className="nav-button menuopen-icon">☰</button> */}
+                    {user?.role === 'admin' && (
+                        <button onClick={() => setIsAdminMenuOpen(true)} className="nav-button adminmenuopen-icon">☰</button>
+                    )}
                 </>
             ) : (
                 <>
@@ -76,6 +102,9 @@ return (
                 </>
             )}
         </nav>
+         {/* --- 👇 [관리자 메뉴 컴포넌트 추가] --- */}
+         <AdminMenu isOpen={isAdminMenuOpen} onClose={() => setIsAdminMenuOpen(false)}></AdminMenu>
+         <Menu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)}></Menu>
         </div>    
         { (location.pathname === '/' || location.pathname.startsWith('/search')) && 
             <form className="search-warp" onSubmit={handleSearch}>
@@ -87,6 +116,7 @@ return (
                     maxLength={30}
                 />
                 <button type="submit" className="action-button button-primary">검색</button>
+
             </form> }
     </header>
 )

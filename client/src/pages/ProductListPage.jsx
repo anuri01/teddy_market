@@ -51,7 +51,7 @@ function ProductListPage() {
     useEffect(() => {
         const shouldShowModal = !getPopupState('productListEvent');
         if(shouldShowModal) {
-            openModal('productListEvent', {id: 'productListEvent'});
+            openModal('productListEvent', {id: 'productListEvent', message: 'props 테스트입니다.'});
         }
     },[openModal])
 
@@ -149,6 +149,7 @@ function ProductListPage() {
                       isOpen={modals.productListEvent?.open}
                       onClose={() => closeModal('productListEvent')}
                       id={modals.productListEvent?.props.id}
+                      message={modals.productListEvent?.props.message}
                      >
                         <h2>🎉 테디마켓 특별 이벤트! 🎉</h2>
                         <p>지금 가입하시면 10% 할인 쿠폰을 드려요!</p>

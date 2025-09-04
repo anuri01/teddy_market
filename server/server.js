@@ -17,6 +17,7 @@ import Orders from './models/Orders.js'; // Orders db스키마 임포트
 import Banner from './models/Banner.js'; // 
 import ChatRooms from './models/ChatRooms.js';
 import Message from './models/Message.js';
+import Popup from './models/Popup.js';
 import upload from './upload.js';
 import { s3 } from './upload.js'; // 👈 이 줄 추가
 import { memoryStorage } from 'multer';
@@ -225,7 +226,7 @@ app.get('/api/users/kakao/callback',
     // 이 정보로 우리 앱의 JWT 토큰을 생성합니다.
 
     const token = jwt.sign(
-        { id: req.user._id, username: req.user.username },
+        { id: req.user._id, username: req.user.username, roll: req.user.roll },
         process.env.JWT_SECRET,
         { expiresIn: '1h'}
        );
@@ -245,7 +246,7 @@ app.get('/api/users/naver/callback',
     // passport인증에 성공하면, ( req, res) {....} 함수가 실행됨
     async ( req, res ) => {
         const token = jwt.sign(
-            { id: req.user._id, username: req.user.username },
+            { id: req.user._id, username: req.user.username, roll: req.user.roll },
             process.env.JWT_SECRET,
             { expiresIn : '1h'}
         );
@@ -901,6 +902,127 @@ app.get('/api/search', async (req, res) => {
         res.status(500).json({message: '서버 오류 발생'});
     }
 });
+
+// 팝업 생성(관리자)
+app.post('/api/popups', authMiddleware, adminMiddleware, upload.single('popupImage'), async(req, res) => {
+    try {
+        const { type, position, title, content, linkUrl, active} = req.body;
+        const newPopup = new Popup({
+            type,
+            position,
+            title,
+            linkUrl,
+            content,
+            active: active === 'true', // 텍스트로 전달되기 때문에 부울린 값으로 변환해서 저장
+            imageUrl: req.file?.location || '',
+            creator: req.user.id,
+        });
+        await newPopup.save();
+        res.status(200).json(newPopup);
+    } catch(error) {
+        res.status(500).json({message: '팝업 생성 중 오류 발생'});
+    }
+});
+
+//전체 팝업 조회(관리자)
+app.get('/api/popups/all', authMiddleware, adminMiddleware, async(req,res) => {
+    try {
+        const allPopups = await Popup.find({}).sort({createdAt: -1});
+        res.status(200).json(allPopups);
+    } catch(error) {
+        res.status(500).json({message: '팝업 리스트를 가져올 때 오류 발생'});
+    }
+});
+
+// 팝업 삭제(관리자)
+app.delete('/api/popups/:id', authMiddleware, adminMiddleware, async(req, res) => {
+    try{
+
+     const { popupId } = req.params;
+        const popup = await Popup.findById(popupId);
+        if(!popup) {
+            res.status(404).json({message: '삭제할 팝업을 찾을 수 없습니다.'});
+        }
+
+        const fileKey = decodeURIComponent(new URL(popup.imageUrl).pathname.substring(1));
+        const command = new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: fileKey,
+        });
+        await s3.send(command);
+        
+        await Popup.findByIdAndDelete(popupId);
+        res.json({message:'배너가 성공적으로 삭제되었습니다.'});
+    } catch(error) {
+        res.status(500).json({message: '서버 오류 발생'});
+    }
+
+});
+
+// 팝업 수정(관리자)
+app.put('/api/popups/:id', authMiddleware, adminMiddleware, upload.single('popupImage'), async(req,res) => {
+    try {
+        const { popupId } = req.params;
+        const { title, content, type, position, linkUrl, active, imageUrl } = req.body;
+        const popup = await Popup.findById({_id: popupId});
+         if (!popup) {
+            return res.status(404).json({ message: '수정할 팝업을 찾을 수 없습니다.' });
+        }
+        const oldImageUrl = popup.imageUrl;
+
+    // [수정] Mongoose 문서의 속성을 직접 변경합니다.
+        popup.title = title;
+        popup.content = content;
+        popup.type = type;
+        popup.position = position;
+        popup.linkUrl = linkUrl;
+        popup.active = active === 'true' ? true : false;
+
+        if (file?.location) {
+        const fileKey = decodeURIComponent(new URL(oldImageUrl).pathname.substring(1));
+        const command = new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: fileKey,
+        });
+        await s3.send(command);
+        }
+        await popup.save()
+        res.status(200).json(popup);
+    } catch(error) {
+        res.status(500).json({message: '팝업 리스트를 가져올 때 오류 발생'});
+    }
+});
+
+// --- 특정 팝업 1개 정보 조회 (관리자용) ---
+app.get('/api/popups/:id', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const popup = await Popup.findById(req.params.id);
+        if (!popup) {
+            return res.status(404).json({ message: '팝업을 찾을 수 없습니다.' });
+        }
+        res.json(popup);
+    } catch (error) {
+        res.status(500).json({ message: '팝업 조회 중 오류 발생' });
+    }
+});
+
+// 활성화된 팝업 목록 조회(사용자 패이지용)
+app.get('/api/popups/active/:position', async(req, res) => {
+    try {
+        const { position } = req.params;
+        const isActivePopups = await Popup.find({active: true, 
+        $or: [{position: position}, {position: 'all'}] // 특정위치 또는 'all' 팝업
+        }).sort({createdAt: - 1}) ;
+        if(!isActivePopups) {
+            res.status(404).json({message: '활성화된 팝업이 없습니다.'})
+        }
+        res.status(200).json(isActivePopups);
+    } catch(error) {
+        res.status(500).json({message: '상품활성 팝업 조회 중 오류 발생'});
+    }
+})
+
+
 
 server.listen(PORT, () => { // app -> server 로 수정
     console.log(`테디마켓 서버가 http://locathost:${PORT}에서 실행 중입니다.`)
