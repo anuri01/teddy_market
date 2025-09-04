@@ -14,6 +14,7 @@ import PaymentPage from './pages/PaymentPage';
 import OrderCompletePage from './pages/OrderCompletePage';
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
+import PopupManager from './components/PopupManager';
 import Footer from './components/Footer';
 import ChatButton from './components/ChatButton';
 import ChatList from './components/ChatList';
@@ -114,7 +115,7 @@ function App() {
           <Route element={<AdminProtectedRoute />}>
             <Route path='/admin' element={<AdminPage />}>
                {/* 나중에 여기에 중첩 라우트 추가 */}
-              {/* 예: <Route path="popups" element={<PopupManager />} /> */}
+              <Route path='popups' element={<PopupManager />} />
             </Route> 
           </Route>
           <Route path='/search' element={<SearchPage />}></Route>

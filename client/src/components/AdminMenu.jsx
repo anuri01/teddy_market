@@ -14,8 +14,8 @@ function AdminMenu({ isOpen, onClose }) {
             </div>
             <nav className="admin-menu-nav">
                 <ul>
-                <li><Link to='/admin/popups'>팝업 관리</Link></li>
-                <li><Link to='/admin/banners'>메인배너 관리</Link></li>
+                <li><Link to='/admin/popups' onClick={onClose}>팝업 관리</Link></li>
+                <li><Link to='/admin/banners' onClick={onClose}>메인배너 관리</Link></li>
                 </ul>
                 {/* 나중에 메뉴 추가 */}
             </nav>

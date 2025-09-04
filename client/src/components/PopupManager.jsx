@@ -1,26 +1,186 @@
 import React, { useState, useEffect } from "react";
 import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
+import './Admin.css'; // 관리자 전용 CSS
 
 function PopupManager () {
     const [ popups, setPopups ] = useState([]);
-    const [ title, setTitle ] = useState('');
-    const [ content, setContent ] = useState('');
-    const [ popupImage, setPopupImage ] = useState('');
-    const [ popupEditing, setPopupEditing ] = useState(false);
     const [ isLoading, setIsLoading ] = useState(true);
 
-    useEffect(() => {
-        const fetchPopup = async () => {
+    // 폼 상태관리
+    const [ editingPopup, setEditingPopup ] = useState(null); // 수정중인 팝업 정보
+    const [ title, setTitle ] = useState('');
+    const [ content, setContent ] = useState('');
+    const [ linkUrl, setLinkUrl ] = useState('');
+    const [ type, setType ] = useState('modal');
+    const [ position, setPosition ] = useState('all');
+    const [ active, setActive ] = useState(false);
+    const [ popupImage, setPopupImage ] = useState('');
+
+    const fetchPopup = async () => {
             try {
                 const response = await api.get('/popups/all');
                 setPopups(response.data);
             } catch (error) {
                 toast.error('팝업 목록을 불러오는데 실패했습니다.');
-            } finally setIsLoading(false);
+            } finally {
+                setIsLoading(false);
+            }
         }
+
+    useEffect(() => {
         fetchPopup();
     }, [])
 
+    const resetForm = () => {
+        setEditingPopup(null);
+        setTitle('');
+        setContent('');
+        setLinkUrl('');
+        setType('modal');
+        setPosition('all');
+        setActive(false);
+        setPopupImage(null);
+        document.getElementById('popupImage').value = null; // 파일 인풋 초기화
+    }
+
+     // 수정 버튼 클릭 시 실행
+    const handleEditClick = (popup) => {
+        setEditingPopup(popup);
+        setTitle(popup.title);
+        setContent(popup.content || '');
+        setLinkUrl(popup.linkUrl || '');
+        setType(popup.type);
+        setPosition(popup.position);
+        setActive(popup.active);
+
+    }
+     
+    // 폼 제출(수정 또는 등록)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        formData.append('linkUrl', linkUrl);
+        formData.append('type', type);
+        formData.append('position', position);
+        formData.append('active', active);
+        if(popupImage) {
+            formData.append('popipImage', popupImage);
+        }
+        try {
+            if(editingPopup) {
+                await api.put(`/popups/${editindPopup._id}`, formData);
+                toast.success('팝업이 수정되었습니다.')
+            } else {
+                await api.post('/popups', formData);
+                toast.success('팝업이 등록되었습니다.');
+            } 
+            resetForm();
+            fetchPopup();
+        } catch(error) {
+            toast.error("작업에 실패했습니다.");
+        }
+    };
+
+        // 삭제 버튼 클릭 시 실행
+    const handleDelete = async (popupId) => {
+        if (window.confirm("정말 이 팝업을 삭제하시겠습니까?")) {
+            try {
+                await api.delete(`/popups/${popupId}`);
+                toast.success('팝업이 삭제되었습니다.');
+                fetchPopup(); // 목록 새로고침
+            } catch (error) {
+                toast.error('삭제에 실패했습니다.');
+            }
+        }
+    };
+
+    if(isLoading) {
+        return (
+        <div className="loading-message">
+            <p>화면을 불러오는 중입니다.</p>
+        </div>
+        )
+    }
+
+    return (
+        <div className="pupup-manager-container">
+            <div className="popup-list">
+                <table className="popup-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">번호</th>
+                            <th scope="col">이름</th>
+                            <th scope="col">등록위치</th>
+                            <th scope="col">시용여부</th>
+                            <th scope="col">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {/* 넘버링을 위해서는 두번째 인자로 배열 index를 넘겨야 한다 */}
+                        { popups.map((pop, index) => { 
+                        <tr key={pop._id}>
+                            <td>{index + 1}</td>
+                            <td>{pop.title}</td>
+                            <td>{pop.position}</td>
+                            <td>{pop.active ? '✔️' : '❌'}</td>
+                            <td>
+                                <button onClick={() => handleEditClick(pop)} className="edit-btn">수정</button>
+                                <button onClick={() => handleDelete(pop._id)} className="delete-btn">삭제</button>  
+                            </td>
+                        </tr>})}
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div className="popup-form">                
+                <form onSubmit={handleSubmit} className="input-form">
+                    <input 
+                     className="input-form"
+                     type="text"
+                     placeholder="제목을 입력하세요."
+                     value={title}
+                     onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <input 
+                     className="input-form"
+                     type="textarea"
+                     placeholder="내용을 입력하세요."
+                     value={content}
+                     onChange={(e) => setContent(e.target.value)}
+                    />
+                    <input type="text" placeholder="제목" value={title} onChange={e => setTitle(e.target.value)} required />
+    <textarea placeholder="내용 (선택)" value={content} onChange={e => setContent(e.target.value)} />
+    <input type="text" placeholder="링크 URL (선택)" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} />
+    <select value={type} onChange={e => setType(e.target.value)}>
+        <option value="modal">모달</option>
+        <option value="bottomSheet">바텀시트</option>
+    </select>
+    <select value={position} onChange={e => setPosition(e.target.value)}>
+        <option value="all">모든 페이지</option>
+        <option value="home">홈페이지</option>
+    </select>
+    <div className="checkbox-group">
+        <label>
+            <input type="checkbox" checked={active} onChange={e => setActive(e.target.checked)} />
+            활성화
+        </label>
+    </div>
+    <input type="file" id="popupImage" onChange={e => setPopupImage(e.target.files[0])} />
     
+    <div className="form-actions">
+        <button type="submit" className="button button-primary">{editingPopup ? '수정 완료' : '등록'}</button>
+        {editingPopup && <button type="button" onClick={resetForm} className="button button-secondary">취소</button>}
+    </div>
+
+                </form>
+            </div>
+
+        </div>
+    )
 }
+
+export default PopupManager;
