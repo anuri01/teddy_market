@@ -802,7 +802,7 @@ app.delete('/api/chat/rooms/:roomId', authMiddleware, async(req, res) => {
 // 배너 등록
 app.post('/api/banners', authMiddleware, adminMiddleware, upload.single('bannerImage'), async(req, res) => {
     try {
-        const { linkUrl } = req.body;
+        const { linkUrl, title, position, active } = req.body;
         const image = req.file;
 
         if(!image) {
@@ -810,6 +810,9 @@ app.post('/api/banners', authMiddleware, adminMiddleware, upload.single('bannerI
         }
         const newBanner = new Banner({
             imageUrl: image.location,
+            title: title,
+            position: position,
+            active: active === 'true', // 텍스트로 전달되기 때문에 부울린 값으로 변환해서 저장
             linkUrl: linkUrl || '',
             creator: req.user.id,
         })
@@ -821,8 +824,43 @@ app.post('/api/banners', authMiddleware, adminMiddleware, upload.single('bannerI
         }
 })
 
+// 배너 수정
+app.put('/api/banners/:id', authMiddleware, adminMiddleware, upload.single('bannerImage'), async(req, res) => {
+    try {
+        const bannerId = req.params.id;
+        const { linkUrl, title, position, active } = req.body;
+
+        const banner = await Banner.findById(bannerId);
+         if (!banner) {
+            return res.status(404).json({ message: '수정할 배너를 찾을 수 없습니다.' });
+        }
+        const oldImageUrl = banner?.imageUrl;
+        
+        // [수정] Mongoose 문서의 속성을 직접 변경합니다.
+        banner.title = title;
+        banner.position = position;
+        banner.linkUrl = linkUrl;
+        banner.active = active === 'true' ? true : false;
+
+        if (req.file?.location) {
+        const fileKey = decodeURIComponent(new URL(oldImageUrl).pathname.substring(1));
+        const command = new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: fileKey,
+        });
+        await s3.send(command);
+        banner.imageUrl = req.file.location
+        }
+        await banner.save()
+        res.status(200).json(banner);
+    } catch(error) {
+        res.status(500).json({message: '배너 수정 중 오류 발생'});
+    }
+})
+
+
 //배너 목록 조회
-app.get('/api/banners', async (req, res) => {
+app.get('/api/banners/all', async (req, res) => {
     try {
         const banners = await Banner.find({}).sort({createdAt: -1 });
         if(!banners) {
@@ -837,9 +875,9 @@ app.get('/api/banners', async (req, res) => {
 }) 
 
 // 배너 삭제(관리자 전용)
-app.delete('/api/banners/:bannerId', authMiddleware, adminMiddleware, async (req, res) => {
+app.delete('/api/banners/:id', authMiddleware, adminMiddleware, async (req, res) => {
     try {
-        const { bannerId } = req.params;
+        const bannerId = req.params.id;
         const banner = await Banner.findById(bannerId);
         if(!banner) {
             res.status(404).json({message: '삭제할 배너를 찾을 수 없습니다.'});
@@ -938,7 +976,7 @@ app.get('/api/popups/all', authMiddleware, adminMiddleware, async(req,res) => {
 app.delete('/api/popups/:id', authMiddleware, adminMiddleware, async(req, res) => {
     try{
 
-     const { popupId } = req.params;
+     const popupId = req.params.id;
         const popup = await Popup.findById(popupId);
         if(!popup) {
             res.status(404).json({message: '삭제할 팝업을 찾을 수 없습니다.'});
@@ -952,7 +990,7 @@ app.delete('/api/popups/:id', authMiddleware, adminMiddleware, async(req, res) =
         await s3.send(command);
         
         await Popup.findByIdAndDelete(popupId);
-        res.json({message:'배너가 성공적으로 삭제되었습니다.'});
+        res.json({message:'팝업이 성공적으로 삭제되었습니다.'});
     } catch(error) {
         res.status(500).json({message: '서버 오류 발생'});
     }
@@ -962,13 +1000,13 @@ app.delete('/api/popups/:id', authMiddleware, adminMiddleware, async(req, res) =
 // 팝업 수정(관리자)
 app.put('/api/popups/:id', authMiddleware, adminMiddleware, upload.single('popupImage'), async(req,res) => {
     try {
-        const { popupId } = req.params;
-        const { title, content, type, position, linkUrl, active, imageUrl } = req.body;
-        const popup = await Popup.findById({_id: popupId});
+        const popupId = req.params.id;
+        const { title, content, type, position, linkUrl, active } = req.body;
+        const popup = await Popup.findById(popupId);
          if (!popup) {
             return res.status(404).json({ message: '수정할 팝업을 찾을 수 없습니다.' });
         }
-        const oldImageUrl = popup.imageUrl;
+        const oldImageUrl = popup?.imageUrl;
 
     // [수정] Mongoose 문서의 속성을 직접 변경합니다.
         popup.title = title;
@@ -978,13 +1016,14 @@ app.put('/api/popups/:id', authMiddleware, adminMiddleware, upload.single('popup
         popup.linkUrl = linkUrl;
         popup.active = active === 'true' ? true : false;
 
-        if (file?.location) {
+        if (req.file?.location) {
         const fileKey = decodeURIComponent(new URL(oldImageUrl).pathname.substring(1));
         const command = new DeleteObjectCommand({
             Bucket: process.env.S3_BUCKET_NAME,
             Key: fileKey,
         });
         await s3.send(command);
+        popup.imageUrl = req.file.location
         }
         await popup.save()
         res.status(200).json(popup);

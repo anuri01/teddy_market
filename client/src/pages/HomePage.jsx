@@ -31,7 +31,7 @@ function HomePage() {
       // Promise.all은 하나라도 실패하면 전체가 실패합니다. 일부만 성공해도 진행하려면 Promise.allSettled를 사용.
       const [ productsRes, bannersRes ] = await Promise.allSettled([
         api.get('/products?limit=4'),
-        api.get('/banners')
+        api.get('/banners/all')
       ]);
       if (productsRes.status === 'fulfilled') {
         setProductList(productsRes.value.data.products);
@@ -141,11 +141,11 @@ if(isLoading) {
                 </div>
               )}
             </section>
-            { user?.role === 'admin' &&
+            {/* { user?.role === 'admin' &&
             <section className="banner-form">
                <BannerForm onBannerAdded={fetchData} /> 
             </section>
-            }
+            } */}
             <section className="product-list-section">
               <div className="section-header">
                 <h2>판매상품</h2>

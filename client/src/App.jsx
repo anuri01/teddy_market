@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, Link } from 'react-router-dom';
+import { Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import useUserStore from './store/userStore';
 import useModalStore from './store/modalStore';
 import Header from './components/Header'; // 헤더 컴포넌트 임포트
@@ -15,6 +15,7 @@ import OrderCompletePage from './pages/OrderCompletePage';
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import PopupManager from './components/PopupManager';
+import BannerManager from './components/BannerManager';
 import Footer from './components/Footer';
 import ChatButton from './components/ChatButton';
 import ChatList from './components/ChatList';
@@ -46,6 +47,8 @@ function App() {
   const [ isChatListOpen, setIsChatListOpen ] = useState(false);
   const [ currentChatRoom, setCurrentChatRoom ] = useState(null); // 채팅방 객체 저장
   // const [ isEventModalOpen, setIsEventModalOpen ] = useState(false); // 이벤트 모달 상태 추가
+
+  const location = useLocation();
 
   //채팅 목록이나 채팅방이 하나라도 열려 있으면 스크롤을 막는 클래스 추가 + 팝업까지 추가
   useEffect(() => {
@@ -92,7 +95,7 @@ function App() {
   };
 
   return (
-    <div className='app-container' id='modal-root'>
+    <div className={`app-container ${location.pathname.startsWith('/admin') ? 'admin-wide' : ''}`} id='modal-root'>
         <Toaster position="top-center" /> {/* 👈 앱 최상단에 Toaster '알림판' 설치 */}
      <Header />
       <main className='app-main'>
@@ -116,6 +119,7 @@ function App() {
             <Route path='/admin' element={<AdminPage />}>
                {/* 나중에 여기에 중첩 라우트 추가 */}
               <Route path='popups' element={<PopupManager />} />
+              <Route path='banners' element={<BannerManager />} />
             </Route> 
           </Route>
           <Route path='/search' element={<SearchPage />}></Route>

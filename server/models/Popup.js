@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const popupSchema = new mongoose.Schema({
     //특정 단어만 사용하게 하고 싶을때는 enum 키에 배열로 저장
-    type: {type: String, enum:['modal', 'bottomSheet']},
-    position: {type: String, enum:['home', 'productList', 'oderComplete', 'profile', 'all'], default: 'all'},
+    type: {type: String, enum:['modal', 'bottom']},
+    position: {type: String, enum:['home', 'productList', 'orderComplete', 'profile', 'all'], default: 'all'},
     title: {type: String, required: true},
     content: {type: String, required: true},
     imageUrl: {type: String},

@@ -39,6 +39,10 @@ body.chat-open { overflow: hidden;}
   overflow: hidden;      /* 앱 영역 밖으로 내용이 안 나가게 */
 }
 
+.app-container.admin-wide {
+  max-width: 800px;
+}
+
 .app-main {
   padding: 1.5rem;
   flex-grow: 1;
