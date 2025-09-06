@@ -93,15 +93,13 @@ function App() {
          
         // 바텀시트 팝업: 모든 것
         const sheets = popups.filter(p => p.type === 'bottom');
+        const filteredSheets = sheets.filter(sheet => !getPopupState(sheet._id)); // 바텀시트가 여러개 일때는 쿠키 체크를 해서 통과하는 것만 전달
         
-        if(sheets && sheets.length > 0) {
-          sheets.forEach(sheet => {
-            const shouldShowSheet = !getPopupState(sheet._id);
-            if (shouldShowSheet) {
+        if(filteredSheets && filteredSheets.length > 0) {
+          filteredSheets.forEach(sheet => {
               const sheetKey = sheet._id;
               openModal(sheetKey, { sheet });
-            }
-          });
+            });
         }
 
         if (modal) {
@@ -113,7 +111,7 @@ function App() {
       }
         // 상태관리는 삭제 가능확인
         setModlaPopups(modal);
-        setBottomSheet(sheets); 
+        setBottomSheet(filteredSheets); 
         console.log('함수 실행후 데이터', sheets)
       } catch (error) {
         console.error('배너/팝업 로딩 실패', error)
@@ -198,7 +196,7 @@ function App() {
             )} 
       {bottomSheet.length > 0 && (
         <BottomSheet 
-        isOpen={modals[bottomSheet[0]._id]?.open} // 하나라도 열려있으면 열림
+        isOpen={bottomSheet.some(sheet => modals[sheet._id]?.open)} // 하나라도 열려있으면 열림
         onClose={() => {
       bottomSheet.forEach(sheet => closeModal(sheet._id)); // 모든 바텀시트 닫기
       }}
