@@ -859,7 +859,24 @@ app.put('/api/banners/:id', authMiddleware, adminMiddleware, upload.single('bann
 })
 
 
-//배너 목록 조회
+//배너 목록 조회(사용자용)
+app.get('/api/banners/active/:position', async (req, res) => {
+    try {
+        const position = req.params.position;
+        // 중복 조건은 배열로 넘김
+        const banners = await Banner.find({active: true, position: { $in: [position, 'all'] }}).sort({createdAt: -1 });
+        if(!banners) {
+            return res.status(404).json({message: '등록된 배너가 없습니다.'});
+        } 
+        res.json(banners);
+    } catch (error) {
+        console.error('배너 조회 중 에러 발생', error);
+        res.status(500).json({message: '서버 오류 발생'});
+        }
+
+}) 
+
+//배너 목록 조회(관리자용)
 app.get('/api/banners/all', async (req, res) => {
     try {
         const banners = await Banner.find({}).sort({createdAt: -1 });
@@ -1050,7 +1067,7 @@ app.get('/api/popups/active/:position', async(req, res) => {
     try {
         const { position } = req.params;
         const isActivePopups = await Popup.find({active: true, 
-        $or: [{position: position}, {position: 'all'}] // 특정위치 또는 'all' 팝업
+        $or: [{position: position}, {position: 'all'}] // 특정위치 또는 'all' 팝업 $or 사용예
         }).sort({createdAt: - 1}) ;
         if(!isActivePopups) {
             res.status(404).json({message: '활성화된 팝업이 없습니다.'})

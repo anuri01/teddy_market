@@ -9,11 +9,11 @@ import "slick-carousel/slick/slick-theme.css"; // 👈 slick 테마 CSS
 import SimpleModal from '../components/SimpleModal'; // 👈 SimpleModal import
 import BottomSheet from "../components/BottomSheet"; //👈 BottomSheet import
 import { getPopupState } from '../utils/cookie'; // 👈 유틸리티 함수(팝업 일정기간 보기 않기 설정) import
-import BannerForm from "../components/BannerForm";
+import BannerSlider from "../components/BannerSlider";
 import useModalStore from "../store/modalStore";
 import './HomePage.css';
 
-function HomePage() {
+function HomePage({ banners }) {
   const [ productList, setProductList ] = useState([]); // 상품목록 기억 상자
   const [ bannerList, setBannerList ] = useState([]);
   const [ isLoading, setIsLoading ]= useState(true);
@@ -58,19 +58,19 @@ function HomePage() {
     setIsLoading(true);
     fetchData();
   }, []);
-  
-  useEffect(() => {
-    const shouldShowModal = !getPopupState('mainEventModal');
-    if(shouldShowModal) {
-      openModal('mainEventModal', { id: 'mainEventModal'}); // value같이 리턴되면되면 false로 리턴해 바텀시트 오픈 안함.
-    };
+  // 모달 팝업 관련 통합중으로 추후 삭제 예정  
+  // useEffect(() => {
+    // const shouldShowModal = !getPopupState('mainEventModal');
+    // if(shouldShowModal) {
+    //   openModal('mainEventModal', { id: 'mainEventModal'}); // value같이 리턴되면되면 false로 리턴해 바텀시트 오픈 안함.
+    // };
 
-    const shouldShowBottomSheet = !getPopupState('mainEventBottom');
-    if(shouldShowBottomSheet) {
-      openModal('mainEventBottom', { id: 'mainEventBottom'}); // value같이 리턴되면되면 false로 리턴해 바텀시트 오픈 안함.
-    };
+  //   const shouldShowBottomSheet = !getPopupState('mainEventBottom');
+  //   if(shouldShowBottomSheet) {
+  //     openModal('mainEventBottom', { id: 'mainEventBottom'}); // value같이 리턴되면되면 false로 리턴해 바텀시트 오픈 안함.
+  //   };
 
-  }, [openModal]);
+  // }, [openModal]);
 
   // react-slick 설정
     const sliderSettings = {
@@ -124,7 +124,8 @@ if(isLoading) {
   // --- 화면 그리기 ---
     return (
         <div className="homepage-container">
-            <section className="banner-area">
+            <BannerSlider banners={banners} />
+            {/* <section className="banner-area">
               {bannerList.length > 0 ? (
                 <Slider {...sliderSettings}>
                   {bannerList.map((banner) => (
@@ -140,7 +141,7 @@ if(isLoading) {
                   <p>현재 등록된 배너가 없습니다.</p>
                 </div>
               )}
-            </section>
+            </section> */}
             {/* { user?.role === 'admin' &&
             <section className="banner-form">
                <BannerForm onBannerAdded={fetchData} /> 
@@ -183,12 +184,8 @@ if(isLoading) {
               <Link to="/write" className="button button-primary add-product-button">상품 등록</Link>
             </div>
            )}
-          {/* {isLoggedIn && (
-            <div className="add-product-button-container">
-              <Link to="/write1" className="button button-primary add-product-button">상품 등록2</Link>
-            </div>
-           )} */}
-          <BottomSheet 
+            {/* 관리자 연동으로 통합 */}
+          {/* <BottomSheet 
             isOpen={modals.mainEventBottom?.open} // 바텀 오픈 여부 props 전달
             onClose={() => closeModal('mainEventBottom')} // 바텀시트 닫기 함수 전달
             id={modals.mainEventBottom?.props.id} // 각 바텀을 구분하기 위한 고유 ID 전달
@@ -198,8 +195,8 @@ if(isLoading) {
             <Link to='/signup'>
               <img onClick={() => closeModal('mainEventBottom')} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
             </Link>
-          </BottomSheet>
-           <SimpleModal 
+          </BottomSheet> */}
+           {/* <SimpleModal 
             isOpen={modals.mainEventModal?.open} // 바텀 오픈 여부 props 전달
             onClose={() => closeModal('mainEventModal')} // 바텀시트 닫기 함수 전달
             id={modals.mainEventModal?.props.id} // 각 바텀을 구분하기 위한 고유 ID 전달
@@ -209,7 +206,7 @@ if(isLoading) {
             <Link to='/signup'>
               <img onClick={() => closeModal('mainEventModal')} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
             </Link>
-          </SimpleModal>
+          </SimpleModal> */}
         </div>
     );
 }

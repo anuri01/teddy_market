@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import BannerSlider from "../components/BannerSlider";
 import api from "../api/axiosConfig";
 import toast from "react-hot-toast";
-import SimpleModal from "../components/SimpleModal";
-import useModalStore from "../store/modalStore";
-import { getPopupState } from "../utils/cookie";
 import './ProductListPage.css';
 import './HomePage.css';
 
-function ProductListPage() {
+function ProductListPage({banners}) {
     const [ products, setProducts ] = useState([]);
     const [ page, setPage ] = useState(1); // 몇페이지까지 불러왔는지 기억할 상태
     const [ isLoading, setIsLoading ] = useState(true);
     const [ hasmore, setHasMore ] = useState(true); // 불러올 상품이 더 있는지 기억할 상태. 끝까지 불러왔다면 더보기 버튼 삭제 또는 변경
     const [ totalProducts, setTotalProducts ] = useState(0);
     // const [ isEventModalOpen, setIsEventModalOpen ] = useState(false); // 이벤트 모달 상태 추가
-    const { modals, openModal, closeModal} = useModalStore();
     const navigate = useNavigate();
     // const [ searchParams, setSearchParams ] = useSearchParams(); 
     
@@ -46,29 +43,6 @@ function ProductListPage() {
             };
             fetchProducts();
         }, [page]);
-    
-    // 모달, 팝업 게시 여부 확인
-    useEffect(() => {
-        const shouldShowModal = !getPopupState('productListEvent');
-        if(shouldShowModal) {
-            openModal('productListEvent', {id: 'productListEvent', message: 'props 테스트입니다.'});
-        }
-    },[openModal])
-
-     // 바텀이나 모달이 열릴때 뒷쪽 화면이 스크롤 안되도록 제어. 추후 전역스토어로 이관 필요함
-    //     useEffect(() => {
-    //     if (isEventModalOpen) {
-    //       document.body.classList.add('chat-open');
-    //     } else {
-    //       document.body.classList.remove('chat-open');
-    //     }
-    
-    //     // 컴포넌트가 사라질 때를 대비한 정리 함수
-    //     return () => {
-    //       document.body.classList.remove('chat-open');
-    //     }
-    
-    //   },[isEventModalOpen])
 
     // '더보기' 버튼 클릭 시 실행될 함수
     const handleLoadMore = () => {
@@ -104,6 +78,7 @@ function ProductListPage() {
             </Link>
 
         </div> */}
+        <BannerSlider banners={banners}/>
            <section className="product-list-section">
                       <div className="section-header">
                         <h2 className="all-product-list-title">전체 판매상품</h2>
@@ -145,7 +120,8 @@ function ProductListPage() {
                         <p className="no-more-products">모든 상품을 불러왔습니다.</p>
     )}
                      </div>
-                     <SimpleModal
+                     {/* 하드코딩일때 예시 */}
+                     {/* <SimpleModal
                       isOpen={modals.productListEvent?.open}
                       onClose={() => closeModal('productListEvent')}
                       id={modals.productListEvent?.props.id}
@@ -156,7 +132,7 @@ function ProductListPage() {
                         <Link to='/signup'>
                           <img onClick={() => closeModal('productListEvent')} src="/images/eventModal.png" alt="이벤트 배너" style={{ maxWidth: '100%', borderRadius: '8px'}} />
                         </Link>
-                     </SimpleModal>
+                     </SimpleModal> */}
         </div>
     )
 };

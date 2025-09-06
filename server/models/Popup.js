@@ -5,7 +5,7 @@ const popupSchema = new mongoose.Schema({
     type: {type: String, enum:['modal', 'bottom']},
     position: {type: String, enum:['home', 'productList', 'orderComplete', 'profile', 'all'], default: 'all'},
     title: {type: String, required: true},
-    content: {type: String, required: true},
+    content: {type: String },
     imageUrl: {type: String},
     linkUrl: {type: String},
     active: { type: Boolean, default: false}, // 관리자가 활성화해야 노출

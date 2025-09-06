@@ -8,7 +8,14 @@ body {
   background-color: #f0f2f5;
 }
 
-body.chat-open { overflow: hidden;}
+body.chat-open { 
+  overflow: hidden;
+  /* 아래 내용은 모바일 사파리 브라우저 스크롤 락을 위한 설정 */
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
 
 .loading-message {
   margin: 0 auto;

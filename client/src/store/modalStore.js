@@ -25,9 +25,10 @@ export const useModalStore = create(set => ({
     closeModal: (type) => set(state => {
         const newModal = { ...state.modals, [type]: {...state.modals[type], open: false}};
         return{
-        modals: newModal,
-        scrollControl: Object.values(newModal).some(modal => modal.open)}
-    }),
-}))
+            modals: newModal,
+            scrollControl: Object.values(newModal).some(modal => modal.open)}
+        }),
+        
+    }))
 
 export default useModalStore;
